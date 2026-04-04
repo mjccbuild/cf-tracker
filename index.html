@@ -656,11 +656,16 @@ async function pushToSheets(){
     invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
     subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
   };
-  const promises=Object.keys(tabs).map(tab=>{
+  const promises=Object.keys(tabs).map(async tab=>{
     const headers=tabs[tab];
     const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
-    const params=new URLSearchParams({action:'write',tab,rows:JSON.stringify(rows)});
-    return fetch(GAS_URL+'?'+params).catch(()=>{});
+    try{
+      await fetch(GAS_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({action:'write',tab,rows:JSON.stringify(rows)}).toString()
+      });
+    }catch(e){}
   });
   await Promise.all(promises);
 }
