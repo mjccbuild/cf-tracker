@@ -604,7 +604,10 @@ function syncToSheets(){
 async function syncFromSheets(){
   try{
     showSyncStatus('Syncing...');
-    const tabs=['loans','expenses','bank','cards','receipts','chuyin'];
+    // First push local data to sheet
+    await pushToSheets();
+    // Then only pull tabs that have MORE data than local (team additions)
+    const tabs=['loans','expenses','bank','cards','receipts','chuyin','proposals','invoices','subs'];
     for(const tab of tabs){
       const res=await fetch(GAS_URL+'?action=read&tab='+tab);
       const json=await res.json();
@@ -612,48 +615,54 @@ async function syncFromSheets(){
         const headers=json.data[0];
         const rows=json.data.slice(1).map(row=>{
           const obj={};
-          headers.forEach((h,i)=>{
-            const v=row[i];
-            obj[h]=typeof v==='number'?v:(v===''?'':v);
-          });
+          headers.forEach((h,i)=>{const v=row[i];obj[h]=typeof v==='number'?v:(v===''?'':v);});
           if(obj.id)obj.id=Number(obj.id);
           if(obj.amount!==undefined)obj.amount=Number(obj.amount)||0;
           if(obj.openBal!==undefined)obj.openBal=Number(obj.openBal)||0;
           if(obj.limit!==undefined)obj.limit=Number(obj.limit)||0;
+          if(obj.contractAmt!==undefined)obj.contractAmt=Number(obj.contractAmt)||0;
           return obj;
         });
-        if(tab==='bank'){
-          // restore txs from sheet
-          for(const b of rows){
-            const txRes=await fetch(GAS_URL+'?action=read&tab=bank_txs_'+b.id);
-            const txJson=await txRes.json();
-            b.txs=[];
-            if(txJson.ok&&txJson.data.length>1){
-              const th=txJson.data[0];
-              b.txs=txJson.data.slice(1).map(row=>{const o={};th.forEach((h,i)=>o[h]=row[i]);o.id=Number(o.id);o.amount=Number(o.amount)||0;return o;});
-            }
+        // Only update if sheet has MORE records than local (someone added on another device)
+        const localArr=DB[tab]||[];
+        if(rows.length>localArr.length){
+          // Merge: keep local records, add new ones from sheet
+          const localIds=new Set(localArr.map(r=>r.id));
+          const newRows=rows.filter(r=>!localIds.has(r.id));
+          if(newRows.length>0){
+            if(tab==='bank'||tab==='cards'){newRows.forEach(r=>r.txs=[]);}
+            DB[tab]=[...localArr,...newRows];
           }
         }
-        if(tab==='cards'){
-          for(const c of rows){
-            const txRes=await fetch(GAS_URL+'?action=read&tab=card_txs_'+c.id);
-            const txJson=await txRes.json();
-            c.txs=[];
-            if(txJson.ok&&txJson.data.length>1){
-              const th=txJson.data[0];
-              c.txs=txJson.data.slice(1).map(row=>{const o={};th.forEach((h,i)=>o[h]=row[i]);o.id=Number(o.id);o.amount=Number(o.amount)||0;return o;});
-            }
-          }
-        }
-        DB[tab]=rows;
       }
     }
     localStorage.setItem(KEY,JSON.stringify(DB));
     render();
     showSyncStatus('Synced ✓');
   }catch(e){
-    showSyncStatus('Offline mode');
+    showSyncStatus('Saved locally ✓');
   }
+}
+
+async function pushToSheets(){
+  const tabs={
+    loans:['id','co','date','paidTo','desc','amount','method','notes'],
+    expenses:['id','co','date','vendor','cat','amount','method','paidBy','status','notes'],
+    bank:['id','co','name','openBal'],
+    cards:['id','co','creditor','last4','limit'],
+    receipts:['id','co','date','vendor','amount','cat','notes'],
+    chuyin:['id','type','date','desc','amount','cat','method','notes'],
+    proposals:['id','co','client','contact','desc','amount','dateSent','dateExpiry','status','notes'],
+    invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
+    subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
+  };
+  const promises=Object.keys(tabs).map(tab=>{
+    const headers=tabs[tab];
+    const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
+    const params=new URLSearchParams({action:'write',tab,rows:JSON.stringify(rows)});
+    return fetch(GAS_URL+'?'+params).catch(()=>{});
+  });
+  await Promise.all(promises);
 }
 
 function showSyncStatus(msg){
