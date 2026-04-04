@@ -604,43 +604,46 @@ function syncToSheets(){
 async function syncFromSheets(){
   try{
     showSyncStatus('Syncing...');
-    // First push local data to sheet
+    // Save local data first
+    localStorage.setItem(KEY,JSON.stringify(DB));
+    // Push local data to sheet
     await pushToSheets();
-    // Then only pull tabs that have MORE data than local (team additions)
-    const tabs=['loans','expenses','bank','cards','receipts','chuyin','proposals','invoices','subs'];
+    // Now pull from sheet to get other team members entries
+    const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
     for(const tab of tabs){
-      const res=await fetch(GAS_URL+'?action=read&tab='+tab);
-      const json=await res.json();
-      if(json.ok&&json.data.length>1){
-        const headers=json.data[0];
-        const rows=json.data.slice(1).map(row=>{
-          const obj={};
-          headers.forEach((h,i)=>{const v=row[i];obj[h]=typeof v==='number'?v:(v===''?'':v);});
-          if(obj.id)obj.id=Number(obj.id);
-          if(obj.amount!==undefined)obj.amount=Number(obj.amount)||0;
-          if(obj.openBal!==undefined)obj.openBal=Number(obj.openBal)||0;
-          if(obj.limit!==undefined)obj.limit=Number(obj.limit)||0;
-          if(obj.contractAmt!==undefined)obj.contractAmt=Number(obj.contractAmt)||0;
-          return obj;
-        });
-        // Only update if sheet has MORE records than local (someone added on another device)
-        const localArr=DB[tab]||[];
-        if(rows.length>localArr.length){
-          // Merge: keep local records, add new ones from sheet
-          const localIds=new Set(localArr.map(r=>r.id));
-          const newRows=rows.filter(r=>!localIds.has(r.id));
-          if(newRows.length>0){
-            if(tab==='bank'||tab==='cards'){newRows.forEach(r=>r.txs=[]);}
-            DB[tab]=[...localArr,...newRows];
+      try{
+        const res=await fetch(GAS_URL+'?action=read&tab='+tab);
+        const json=await res.json();
+        if(json.ok&&json.data&&json.data.length>1){
+          const headers=json.data[0];
+          const sheetRows=json.data.slice(1).map(row=>{
+            const obj={};
+            headers.forEach((h,i)=>{
+              const v=row[i];
+              obj[h]=v===''?'':v;
+            });
+            if(obj.id)obj.id=Number(obj.id);
+            if(obj.amount!==undefined&&obj.amount!=='')obj.amount=Number(obj.amount)||0;
+            if(obj.contractAmt!==undefined)obj.contractAmt=Number(obj.contractAmt)||0;
+            return obj;
+          });
+          // Merge: add any entries from sheet that aren't on this device
+          const localIds=new Set((DB[tab]||[]).map(r=>r.id));
+          const newEntries=sheetRows.filter(r=>r.id&&!localIds.has(r.id));
+          if(newEntries.length>0){
+            DB[tab]=[...(DB[tab]||[]),...newEntries];
           }
         }
-      }
+      }catch(tabErr){}
     }
     localStorage.setItem(KEY,JSON.stringify(DB));
     render();
     showSyncStatus('Synced ✓');
+    toast('Synced ✓');
   }catch(e){
-    showSyncStatus('Saved locally ✓'); console.log('Sync error:',e);
+    localStorage.setItem(KEY,JSON.stringify(DB));
+    showSyncStatus('Saved locally ✓');
+    render();
   }
 }
 
@@ -670,7 +673,7 @@ async function pushToSheets(){
 
 function showSyncStatus(msg){
   const el=document.getElementById('sync-status');
-  if(el){el.textContent=msg;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',3000);}
+  if(el){el.textContent=msg;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',5000);}
 }
 function showSyncDot(){showSyncStatus('Saved to Sheet ✓');}
 
