@@ -167,6 +167,21 @@ nav button.active{color:var(--blue);}
 .toast.show{opacity:1;}
 
 /* EMPTY */
+/* STATUS BADGES */
+.bpend{background:#fff8e1;color:#d97706;}.bacc{background:#f0fdf4;color:#16a34a;}.brej{background:#fff5f5;color:#e53e3e;}
+.bpaid{background:#f0fdf4;color:#16a34a;}.bunpaid{background:#fff5f5;color:#e53e3e;}.bpart{background:#fff8e1;color:#d97706;}
+/* PROGRESS BAR FOR PAYMENTS */
+.pay-prog{margin-top:8px;}
+.pay-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--gray400);margin-bottom:4px;}
+
+
+/* STATUS BADGES */
+.bpend{background:#fff8e1;color:#d97706;}.bacc{background:#f0fdf4;color:#16a34a;}.brej{background:#fff5f5;color:#e53e3e;}
+.bpaid{background:#f0fdf4;color:#16a34a;}.bunpaid{background:#fff5f5;color:#e53e3e;}.bpart{background:#fff8e1;color:#d97706;}
+/* PROGRESS BAR FOR PAYMENTS */
+.pay-prog{margin-top:8px;}
+.pay-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--gray400);margin-bottom:4px;}
+
 .empty{text-align:center;padding:40px 16px;color:var(--gray400);font-size:14px;}
 .eico{font-size:38px;margin-bottom:8px;}
 
@@ -333,6 +348,71 @@ nav button.active{color:var(--blue);}
   <div class="list" id="ch-list"></div>
 </div>
 
+
+<!-- ═══ PROPOSALS ═══ -->
+<div id="page-proposals" class="page">
+  <div class="hdr blue"><h1>Proposals</h1><p>Client proposals by company</p></div>
+  <div class="tabs">
+    <div class="tab tall" onclick="filterTab('proposals','all',this)">All</div>
+    <div class="tab" onclick="filterTab('proposals','MJ',this)">MJ</div>
+    <div class="tab" onclick="filterTab('proposals','Arctic',this)">Arctic</div>
+    <div class="tab" onclick="filterTab('proposals','Pending',this)">Pending</div>
+    <div class="tab" onclick="filterTab('proposals','Accepted',this)">Won</div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="list" id="prop-list"></div>
+</div>
+
+<!-- ═══ INVOICES ═══ -->
+<div id="page-invoices" class="page">
+  <div class="hdr blue"><h1>Invoices</h1><p>Client invoices & payments</p></div>
+  <div class="tabs">
+    <div class="tab tall" onclick="filterTab('invoices','all',this)">All</div>
+    <div class="tab" onclick="filterTab('invoices','MJ',this)">MJ</div>
+    <div class="tab" onclick="filterTab('invoices','Arctic',this)">Arctic</div>
+    <div class="tab" onclick="filterTab('invoices','Unpaid',this)">Unpaid</div>
+    <div class="tab" onclick="filterTab('invoices','Paid',this)">Paid</div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="list" id="inv-list"></div>
+</div>
+
+<!-- ═══ SUBCONTRACTORS ═══ -->
+<div id="page-subs" class="page">
+  <div class="hdr blue"><h1>Subcontractors</h1><p>Sub contracts & payments</p></div>
+  <div class="tabs">
+    <div class="tab tall" onclick="filterTab('subs','all',this)">All</div>
+    <div class="tab" onclick="filterTab('subs','MJ',this)">MJ</div>
+    <div class="tab" onclick="filterTab('subs','Arctic',this)">Arctic</div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="list" id="sub-list"></div>
+</div>
+
+<!-- SUBCONTRACTOR DETAIL -->
+<div id="subpage-sub" class="subpage">
+  <div class="sub-hdr" id="sub-sub-hdr">
+    <h2 id="sub-sub-name">Subcontractor</h2>
+    <p id="sub-sub-info">Contract: $0</p>
+    <button class="sub-back" onclick="closeSubpage('sub')">✕ Close</button>
+  </div>
+  <div style="height:12px"></div>
+  <div class="list" id="sub-sub-list"></div>
+  <button class="sub-fab" onclick="openAddSubPmt()">+</button>
+</div>
+
+<!-- INVOICE DETAIL -->
+<div id="subpage-inv" class="subpage">
+  <div class="sub-hdr" id="sub-inv-hdr">
+    <h2 id="sub-inv-name">Invoice</h2>
+    <p id="sub-inv-info">Amount: $0</p>
+    <button class="sub-back" onclick="closeSubpage('inv')">✕ Close</button>
+  </div>
+  <div style="height:12px"></div>
+  <div class="list" id="sub-inv-list"></div>
+  <button class="sub-fab" onclick="openAddInvPmt()">+</button>
+</div>
+
 <!-- NAV -->
 <nav>
   <button class="active" onclick="showPage('dashboard',this)">
@@ -362,6 +442,18 @@ nav button.active{color:var(--blue);}
   <button onclick="showPage('chuyin',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v9a2 2 0 01-2 2h-3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
     Chuyin
+  </button>
+  <button onclick="showPage('proposals',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Proposals
+  </button>
+  <button onclick="showPage('invoices',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    Invoices
+  </button>
+  <button onclick="showPage('subs',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Subs
   </button>
 </nav>
 
@@ -398,10 +490,9 @@ nav button.active{color:var(--blue);}
 
 <script>
 function todayStr(){return new Date().toISOString().split('T')[0];}
-
 // ── CONSTANTS ──────────────────────────────────────────────────
 const KEY='cf_v7';
-const GAS_URL='https://script.google.com/macros/s/AKfycbyEoW-9jL8lkPgXRUgQ5D2d9tqybQO9INbfbB0mDAgf2UTp95YseMjymfuEHxj7od6d/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycby4kNDPXOk-x371FT3W1ltUkHAlca86XRFrCaDSdOVHc4tyEWi1TeU9F4oLu0gnU7W-/exec';
 const CATS=['Legal & Formation','Licensing & Testing','Materials','Labor / Subcontractors','Equipment & Tools','Office & Admin','Gas & Transportation','Bank / Credit Card Fees','Other'];
 const METHODS=['Cash','Credit Card','Debit Card','Check','Bank Transfer','Zelle','Amazon','Card','ACH','Wire'];
 const STATUSES=['Pending','Paid','Partial','Deferred'];
@@ -444,22 +535,27 @@ function seed(){
       {id:31,co:'Arctic',date:'2026-03-21',paidTo:'Arctic',desc:'GPS Tracker — Amazon',amount:35.95,method:'Amazon',notes:''},
     ],
     expenses:[],
+    // Bank accounts: each has a list of transactions
     bank:[
       {id:100,co:'MJ',name:'US Bank Checking',openBal:0,txs:[]},
       {id:101,co:'MJ',name:'Amex Checking',openBal:0,txs:[]},
       {id:102,co:'Arctic',name:'Arctic Penguin Bank',openBal:0,txs:[]},
     ],
+    // Cards: each has a list of transactions
     cards:[
       {id:200,co:'MJ',creditor:'Amex',last4:'',limit:0,txs:[]},
     ],
     receipts:[],
-    chuyin:[],
+
+    proposals:[], // {id,co,client,contact,desc,amount,dateSent,dateExpiry,status}
+    invoices:[],  // {id,co,invNum,client,amount,dueDate,status,lineItems,pmts,notes}
+    subs:[],      // {id,co,name,contact,workDesc,contractAmt,pmts,notes}
+    chuyin:[], // {id, date, type:'income'|'expense', desc, amount, cat, method, notes}
     nextId:300
   };
 }
 
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}return seed();}
-
 function save(){
   localStorage.setItem(KEY,JSON.stringify(DB));
   syncToSheets();
@@ -468,50 +564,41 @@ let DB=load();
 
 // ── GOOGLE SHEETS SYNC ─────────────────────────────────────────
 let syncTimer=null;
-
 function syncToSheets(){
   clearTimeout(syncTimer);
-  syncTimer=setTimeout(async ()=>{
-    showSyncStatus('Saving...');
-    try{
-      const tabs={
-        loans:['id','co','date','paidTo','desc','amount','method','notes'],
-        expenses:['id','co','date','vendor','cat','amount','method','paidBy','status','notes'],
-        bank:['id','co','name','openBal'],
-        cards:['id','co','creditor','last4','limit'],
-        receipts:['id','co','date','vendor','amount','cat','notes'],
-        chuyin:['id','type','date','desc','amount','cat','method','notes'],
-      };
-      const writes=[];
-      Object.keys(tabs).forEach(tab=>{
-        const headers=tabs[tab];
-        const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
-        writes.push(postToSheets(tab,rows));
-      });
-      DB.bank.forEach(b=>{
-        const txs=b.txs||[];
-        const headers=['id','type','date','desc','amount','method','notes'];
-        const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
-        writes.push(postToSheets('bank_txs_'+b.id,rows));
-      });
-      DB.cards.forEach(c=>{
-        const txs=c.txs||[];
-        const headers=['id','type','date','desc','amount','cat','notes'];
-        const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
-        writes.push(postToSheets('card_txs_'+c.id,rows));
-      });
-      await Promise.all(writes);
-      showSyncStatus('Saved to Sheet ✓');
-    }catch(e){
-      showSyncStatus('Save failed — offline?');
-    }
+  syncTimer=setTimeout(()=>{
+    const tabs={
+      loans:['id','co','date','paidTo','desc','amount','method','notes'],
+      expenses:['id','co','date','vendor','cat','amount','method','paidBy','status','notes'],
+      bank:['id','co','name','openBal'],
+      cards:['id','co','creditor','last4','limit'],
+      receipts:['id','co','date','vendor','amount','cat','notes'],
+      chuyin:['id','type','date','desc','amount','cat','method','notes'],
+    };
+    Object.keys(tabs).forEach(tab=>{
+      const headers=tabs[tab];
+      const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
+      const params=new URLSearchParams({action:'write',tab,rows:JSON.stringify(rows)});
+      fetch(GAS_URL+'?'+params).catch(()=>{});
+    });
+    // Sync bank transactions
+    DB.bank.forEach(b=>{
+      const txs=b.txs||[];
+      const headers=['id','type','date','desc','amount','method','notes'];
+      const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
+      const params=new URLSearchParams({action:'write',tab:'bank_txs_'+b.id,rows:JSON.stringify(rows)});
+      fetch(GAS_URL+'?'+params).catch(()=>{});
+    });
+    // Sync card transactions
+    DB.cards.forEach(c=>{
+      const txs=c.txs||[];
+      const headers=['id','type','date','desc','amount','cat','notes'];
+      const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
+      const params=new URLSearchParams({action:'write',tab:'card_txs_'+c.id,rows:JSON.stringify(rows)});
+      fetch(GAS_URL+'?'+params).catch(()=>{});
+    });
+    showSyncDot();
   },1500);
-}
-
-async function postToSheets(tab, rows){
-  const url = GAS_URL + '?action=write&tab=' + encodeURIComponent(tab) + '&rows=' + encodeURIComponent(JSON.stringify(rows));
-  const res = await fetch(url);
-  return res.json();
 }
 
 async function syncFromSheets(){
@@ -536,6 +623,7 @@ async function syncFromSheets(){
           return obj;
         });
         if(tab==='bank'){
+          // restore txs from sheet
           for(const b of rows){
             const txRes=await fetch(GAS_URL+'?action=read&tab=bank_txs_'+b.id);
             const txJson=await txRes.json();
@@ -570,8 +658,9 @@ async function syncFromSheets(){
 
 function showSyncStatus(msg){
   const el=document.getElementById('sync-status');
-  if(el){el.textContent=msg;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',3500);}
+  if(el){el.textContent=msg;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',3000);}
 }
+function showSyncDot(){showSyncStatus('Saved to Sheet ✓');}
 
 // ── UTILS ───────────────────────────────────────────────────────
 function fmt(n){return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -581,7 +670,7 @@ function g(id){const el=document.getElementById(id);return el?el.value:'';}
 
 // ── NAVIGATION ──────────────────────────────────────────────────
 let curPage='dashboard';
-const filters={loans:'all',expenses:'all',bank:'all',cards:'all',receipts:'all',chuyin:'all'};
+const filters={loans:'all',expenses:'all',bank:'all',cards:'all',receipts:'all',chuyin:'all',proposals:'all',invoices:'all',subs:'all'};
 
 function showPage(name,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -609,6 +698,9 @@ function render(){
   else if(curPage==='cards')renderCards();
   else if(curPage==='receipts')renderReceipts();
   else if(curPage==='chuyin')renderChuyin();
+  else if(curPage==='proposals')renderProposals();
+  else if(curPage==='invoices')renderInvoices();
+  else if(curPage==='subs')renderSubs();
 }
 
 // ── DASHBOARD ───────────────────────────────────────────────────
@@ -707,6 +799,7 @@ function renderBank(){
     </div>`;}).join(''):'<div class="empty"><div class="eico">🏦</div>No accounts yet<br><br>Tap + to add one</div>';
 }
 
+// Bank detail subpage
 let curBankId=null;
 function openBankDetail(id){
   curBankId=id;
@@ -723,6 +816,8 @@ function openBankDetail(id){
 function renderBankTxs(){
   const b=DB.bank.find(x=>x.id===curBankId);if(!b)return;
   const txs=[...(b.txs||[])].sort((a,z)=>z.date.localeCompare(a.date));
+  let running=(b.openBal||0);
+  // recalculate running balance from oldest
   const sorted=[...(b.txs||[])].sort((a,z)=>a.date.localeCompare(z.date));
   const balMap={};let r=b.openBal||0;
   sorted.forEach(t=>{r+=t.type==='deposit'?t.amount:-t.amount;balMap[t.id]=r;});
@@ -868,7 +963,7 @@ function renderChuyin(){
 // ── FORMS ───────────────────────────────────────────────────────
 function loanForm(d){const t=todayStr();return `
   <div class="f2">
-    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${!d||d.co==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d&&d.co==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
     <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
   </div>
   <div class="frow"><label>Paid To</label><input type="text" id="fpt" placeholder="e.g. Jesus JR, MJ" value="${d?d.paidTo:''}"></div>
@@ -882,7 +977,7 @@ function loanForm(d){const t=todayStr();return `
 
 function expForm(d){const t=todayStr();return `
   <div class="f2">
-    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${!d||d.co==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d&&d.co==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
     <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
   </div>
   <div class="frow"><label>Vendor / Paid To</label><input type="text" id="fvend" placeholder="e.g. Home Depot" value="${d?d.vendor:''}"></div>
@@ -899,7 +994,7 @@ function expForm(d){const t=todayStr();return `
   <div class="brow"><button type="button" class="btn bsec" onclick="closeModal()">Cancel</button><button type="button" class="btn bprim" onclick="saveExp()">Save</button></div>`;}
 
 function bankForm(d){return `
-  <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${!d||d.co==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d&&d.co==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+  <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
   <div class="frow"><label>Account Name</label><input type="text" id="fname" placeholder="e.g. US Bank Checking" value="${d?d.name:''}"></div>
   <div class="frow"><label>Opening Balance ($)</label><input type="number" id="fob" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.openBal:0}"></div>
   <div class="brow"><button type="button" class="btn bsec" onclick="closeModal()">Cancel</button><button type="button" class="btn bprim" onclick="saveBank()">Save</button></div>`;}
@@ -918,7 +1013,7 @@ function bankTxForm(d){const t=todayStr();return `
   <div class="brow"><button type="button" class="btn bsec" onclick="closeModal()">Cancel</button><button type="button" class="btn bprim" onclick="saveBankTx()">Save</button></div>`;}
 
 function cardForm(d){return `
-  <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${!d||d.co==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d&&d.co==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+  <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
   <div class="f2">
     <div class="frow"><label>Creditor</label><input type="text" id="fcred" placeholder="Amex, Chase…" value="${d?d.creditor:''}"></div>
     <div class="frow"><label>Last 4 Digits</label><input type="text" id="fl4" maxlength="4" inputmode="numeric" placeholder="1234" value="${d?d.last4:''}"></div>
@@ -942,7 +1037,7 @@ function cardTxForm(d){const t=todayStr();return `
 let pendingPhoto=null;
 function recForm(d){const t=todayStr();return `
   <div class="f2">
-    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${!d||d.co==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d&&d.co==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
     <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
   </div>
   <div class="frow"><label>Vendor</label><input type="text" id="fvend" placeholder="e.g. Home Depot" value="${d?d.vendor:''}"></div>
@@ -987,10 +1082,10 @@ function previewPhoto(input){
 // ── MODAL OPEN/CLOSE ────────────────────────────────────────────
 let emode=false,eid=null,etype=null;
 function openAdd(){
-  emode=false;eid=null;pendingPhoto=null;
-  const map={dashboard:'loan',loans:'loan',expenses:'expense',bank:'bank',cards:'card',receipts:'receipt',chuyin:'chuyin'};
-  const titles={loan:'Add Transaction',expense:'Add Expense',bank:'Add Bank Account',card:'Add Credit Card',receipt:'Add Receipt',chuyin:'Add Chuyin Entry'};
-  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm};
+  emode=false;eid=null;pendingPhoto=null;if(!window.lastCo)window.lastCo='MJ';
+  const map={dashboard:'loan',loans:'loan',expenses:'expense',bank:'bank',cards:'card',receipts:'receipt',chuyin:'chuyin',proposals:'proposal',invoices:'invoice',subs:'sub'};
+  const titles={loan:'Add Transaction',expense:'Add Expense',bank:'Add Bank Account',card:'Add Credit Card',receipt:'Add Receipt',chuyin:'Add Chuyin Entry',proposal:'Add Proposal',invoice:'Add Invoice',sub:'Add Subcontractor'};
+  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,proposal:propForm,invoice:invForm,sub:subForm};
   etype=map[curPage];
   document.getElementById('mtitle').textContent=titles[etype];
   document.getElementById('mbody').innerHTML=forms[etype](null);
@@ -1010,14 +1105,14 @@ function openAddCardTx(){
 }
 function openEdit(type,d){
   emode=true;eid=d.id;etype=type;pendingPhoto=null;
-  const titles={loan:'Edit Transaction',expense:'Edit Expense',bank:'Edit Account',card:'Edit Card',receipt:'Edit Receipt',chuyin:'Edit Entry',bankTx:'Edit Transaction',cardTx:'Edit Transaction'};
-  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,bankTx:bankTxForm,cardTx:cardTxForm};
+  const titles={loan:'Edit Transaction',expense:'Edit Expense',bank:'Edit Account',card:'Edit Card',receipt:'Edit Receipt',chuyin:'Edit Entry',bankTx:'Edit Transaction',cardTx:'Edit Transaction',proposal:'Edit Proposal',invoice:'Edit Invoice',sub:'Edit Subcontractor',subPmt:'Edit Payment',invPmt:'Edit Payment'};
+  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,bankTx:bankTxForm,cardTx:cardTxForm,proposal:propForm,invoice:invForm,sub:subForm,subPmt:subPmtForm,invPmt:invPmtForm};
   document.getElementById('mtitle').textContent=titles[type];
   document.getElementById('mbody').innerHTML=forms[type](d);
   document.getElementById('overlay').classList.add('open');
 }
 function closeModal(){document.getElementById('overlay').classList.remove('open');}
-function closeOv(e){if(e.target.id==='overlay')closeModal();}
+function closeOv(e){if(e.target===document.getElementById('overlay'))closeModal();}
 
 // ── SAVE FUNCTIONS ──────────────────────────────────────────────
 function saveLoan(){
@@ -1049,6 +1144,7 @@ function saveBankTx(){
   if(!bank.txs)bank.txs=[];
   if(emode)bank.txs=bank.txs.map(t=>t.id===eid?r:t);else bank.txs.push(r);
   save();closeModal();renderBankTxs();toast(emode?'Updated ✓':'Added ✓');
+  // update subpage header
   openBankDetail(curBankId);document.getElementById('subpage-bank').classList.add('open');
 }
 function saveCard(){
@@ -1073,7 +1169,7 @@ function saveRec(){
   if(isNaN(amt)||amt===0){toast('⚠️ Enter an amount');return;}
   if(!DB.receipts)DB.receipts=[];
   const existingPhoto=emode&&eid?((DB.receipts.find(r=>r.id===eid)||{}).photo):null;
-  const r={id:emode?eid:DB.nextId++,co:g('fc')||'MJ',date:g('fd')||todayStr(),vendor:g('fvend')||'Vendor',amount:amt,cat:g('fcat'),notes:g('fnotes'),photo:pendingPhoto||(emode?existingPhoto:null)};
+  const r={id:emode?eid:DB.nextId++,co:g('fc')||'MJ',date:g('fd')||todayStr(),vendor:g('fvend')||'Vendor',amount:amt,cat:g('fcat'),notes:g('fnotes'),photo:pendingPhoto||existingPhoto||null};
   if(emode)DB.receipts=DB.receipts.map(x=>x.id===eid?r:x);else DB.receipts.push(r);
   pendingPhoto=null;save();closeModal();render();toast(emode?'Updated ✓':'Saved ✓');
 }
@@ -1110,19 +1206,323 @@ function confirmDel(){
   if(dType==='cardTx'){const c=DB.cards.find(x=>x.id===curCardId);if(c)c.txs=(c.txs||[]).filter(t=>t.id!==dId);}
   if(dType==='rec')DB.receipts=(DB.receipts||[]).filter(r=>r.id!==dId);
   if(dType==='chuyin')DB.chuyin=(DB.chuyin||[]).filter(c=>c.id!==dId);
+  if(dType==='proposal')DB.proposals=(DB.proposals||[]).filter(p=>p.id!==dId);
+  if(dType==='invoice')DB.invoices=(DB.invoices||[]).filter(i=>i.id!==dId);
+  if(dType==='sub')DB.subs=(DB.subs||[]).filter(s=>s.id!==dId);
+  if(dType==='subPmt'){const s=DB.subs.find(x=>x.id===curSubId);if(s)s.pmts=(s.pmts||[]).filter(p=>p.id!==dId);}
+  if(dType==='invPmt'){const i=DB.invoices.find(x=>x.id===curInvId);if(i)i.pmts=(i.pmts||[]).filter(p=>p.id!==dId);}
   save();closeCon();
   if(dType==='bankTx'){renderBankTxs();openBankDetail(curBankId);document.getElementById('subpage-bank').classList.add('open');}
   else if(dType==='cardTx'){renderCardTxs();openCardDetail(curCardId);document.getElementById('subpage-card').classList.add('open');}
+  else if(dType==='subPmt'){renderSubPmts();openSubDetail(curSubId);document.getElementById('subpage-sub').classList.add('open');}
+  else if(dType==='invPmt'){renderInvPmts();openInvDetail(curInvId);document.getElementById('subpage-inv').classList.add('open');}
   else render();
   toast('Deleted ✓');
 }
 
-// Auto-sync on load
-window.addEventListener('load', ()=>{
-  render();
-  // Trigger initial sync to sheet
-  setTimeout(()=>syncToSheets(), 2000);
-});
+
+// ── PROPOSAL FUNCTIONS ──────────────────────────────────────────
+const PROP_STATUSES=['Pending','Accepted','Rejected','Draft'];
+
+function renderProposals(){
+  let d=DB.proposals||[];
+  const f=filters.proposals;
+  if(f==='MJ')d=d.filter(p=>p.co==='MJ');
+  else if(f==='Arctic')d=d.filter(p=>p.co==='Arctic');
+  else if(f==='Pending')d=d.filter(p=>p.status==='Pending');
+  else if(f==='Accepted')d=d.filter(p=>p.status==='Accepted');
+  d=[...d].sort((a,b)=>b.dateSent.localeCompare(a.dateSent));
+  const total=d.reduce((s,p)=>s+(p.status==='Accepted'?p.amount:0),0);
+  document.getElementById('prop-list').innerHTML=`
+    <div class="stat blue full" style="margin:0 16px 8px;border-radius:14px;padding:14px 18px">
+      <div class="stat-lbl">Won Revenue</div>
+      <div class="stat-val">${fmt(total)}</div>
+      <div class="stat-sub">${d.filter(p=>p.status==='Accepted').length} accepted proposals</div>
+    </div>
+    ${d.length?d.map(p=>{
+      const isMJ=p.co==='MJ';
+      const sc=p.status==='Accepted'?'bacc':p.status==='Rejected'?'brej':'bpend';
+      return `<div class="card">
+        <div class="row">
+          <div class="ico ${isMJ?'ik':'ib'}">${isMJ?'🏗️':'❄️'}</div>
+          <div class="info">
+            <div class="ititle">${p.client}</div>
+            <div class="isub"><span class="badge ${isMJ?'bmj':'bap'}">${isMJ?'MJ':'Arctic'}</span><span class="badge ${sc}">${p.status}</span></div>
+            <div class="isub">${p.desc}</div>
+            ${p.contact?`<div class="inote">📞 ${p.contact}</div>`:''}
+            ${p.dateSent?`<div class="inote">Sent: ${fd(p.dateSent)}${p.dateExpiry?' · Expires: '+fd(p.dateExpiry):''}</div>`:''}
+          </div>
+          <div class="amt cg">${fmt(p.amount)}</div>
+        </div>
+        <div class="actions">
+          <button class="bedit" onclick="editProp(${p.id})">✏️ Edit</button>
+          <button class="bdel" onclick="askDel('proposal',${p.id})">🗑</button>
+        </div>
+      </div>`;}).join(''):'<div class="empty"><div class="eico">📋</div>No proposals yet<br><br>Tap + to add one</div>'}`;
+}
+
+function propForm(d){const t=todayStr();return `
+  <div class="f2">
+    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+    <div class="frow"><label>Status</label><select id="fsta">${PROP_STATUSES.map(s=>`<option ${d&&d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+  </div>
+  <div class="frow"><label>Client Name</label><input type="text" id="fclient" placeholder="e.g. John Smith" value="${d?d.client:''}"></div>
+  <div class="frow"><label>Client Contact (phone/email)</label><input type="text" id="fcontact" placeholder="e.g. 555-1234" value="${d?d.contact:''}"></div>
+  <div class="frow"><label>Project Description</label><input type="text" id="fdesc" placeholder="e.g. Kitchen remodel" value="${d?d.desc:''}"></div>
+  <div class="frow"><label>Proposal Amount ($)</label><input type="number" id="famt" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.amount:''}"></div>
+  <div class="f2">
+    <div class="frow"><label>Date Sent</label><input type="date" id="fds" value="${d?d.dateSent:t}"></div>
+    <div class="frow"><label>Expiry Date</label><input type="date" id="fde" value="${d?d.dateExpiry:''}"></div>
+  </div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button class="btn bsec" onclick="closeModal()">Cancel</button><button class="btn bprim" onclick="saveProp()">Save</button></div>`;}
+
+function saveProp(){
+  const amt=parseFloat(g('famt'));
+  if(!g('fclient')||isNaN(amt)){alert('Fill in client name and amount.');return;}
+  if(!DB.proposals)DB.proposals=[];
+  window.lastCo=g('fc');
+  const r={id:emode?eid:DB.nextId++,co:g('fc'),client:g('fclient'),contact:g('fcontact'),desc:g('fdesc'),amount:amt,dateSent:g('fds'),dateExpiry:g('fde'),status:g('fsta'),notes:g('fnotes')};
+  if(emode)DB.proposals=DB.proposals.map(p=>p.id===eid?r:p);else DB.proposals.push(r);
+  save();closeModal();render();toast(emode?'Updated ✓':'Added ✓');
+}
+function editProp(id){const d=(DB.proposals||[]).find(p=>p.id===id);if(d)openEdit('proposal',d);}
+
+// ── INVOICE FUNCTIONS ───────────────────────────────────────────
+const INV_STATUSES=['Unpaid','Paid','Partial','Overdue'];
+let curInvId=null;
+
+function renderInvoices(){
+  let d=DB.invoices||[];
+  const f=filters.invoices;
+  if(f==='MJ')d=d.filter(i=>i.co==='MJ');
+  else if(f==='Arctic')d=d.filter(i=>i.co==='Arctic');
+  else if(f==='Unpaid')d=d.filter(i=>i.status==='Unpaid'||i.status==='Overdue');
+  else if(f==='Paid')d=d.filter(i=>i.status==='Paid');
+  d=[...d].sort((a,b)=>b.dueDate.localeCompare(a.dueDate));
+  const totalOwed=d.filter(i=>i.status!=='Paid').reduce((s,i)=>s+i.amount-(i.pmts||[]).reduce((x,p)=>x+p.amount,0),0);
+  document.getElementById('inv-list').innerHTML=`
+    <div class="stat blue full" style="margin:0 16px 8px;border-radius:14px;padding:14px 18px">
+      <div class="stat-lbl">Total Outstanding</div>
+      <div class="stat-val">${fmt(totalOwed)}</div>
+      <div class="stat-sub">${d.filter(i=>i.status!=='Paid').length} unpaid invoices</div>
+    </div>
+    ${d.length?d.map(i=>{
+      const isMJ=i.co==='MJ';
+      const pmtTotal=(i.pmts||[]).reduce((s,p)=>s+p.amount,0);
+      const remaining=i.amount-pmtTotal;
+      const pct=i.amount>0?Math.min(100,Math.round(pmtTotal/i.amount*100)):0;
+      const sc=i.status==='Paid'?'bpaid':i.status==='Overdue'?'brej':i.status==='Partial'?'bpart':'bunpaid';
+      return `<div class="card">
+        <div class="row">
+          <div class="ico ig">🧾</div>
+          <div class="info">
+            <div class="ititle">#${i.invNum} — ${i.client}</div>
+            <div class="isub"><span class="badge ${isMJ?'bmj':'bap'}">${isMJ?'MJ':'Arctic'}</span><span class="badge ${sc}">${i.status}</span></div>
+            ${i.dueDate?`<div class="inote">Due: ${fd(i.dueDate)}</div>`:''}
+            ${i.amount>0?`<div class="pay-prog"><div class="pay-meta"><span>Paid: ${fmt(pmtTotal)}</span><span>Remaining: ${fmt(remaining)}</span></div><div class="pbar"><div class="pfill${pct>=100?' ':" warn"}" style="width:${pct}%"></div></div></div>`:''}
+          </div>
+          <div class="amt ${i.status==='Paid'?'cg':'cr'}">${fmt(i.amount)}</div>
+        </div>
+        <div class="actions">
+          <button class="bview" onclick="openInvDetail(${i.id})">💳 Payments</button>
+          <button class="bedit" onclick="editInv(${i.id})">✏️ Edit</button>
+          <button class="bdel" onclick="askDel('invoice',${i.id})">🗑</button>
+        </div>
+      </div>`;}).join(''):'<div class="empty"><div class="eico">🧾</div>No invoices yet<br><br>Tap + to add one</div>'}`;
+}
+
+function invForm(d){const t=todayStr();return `
+  <div class="f2">
+    <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+    <div class="frow"><label>Status</label><select id="fsta">${INV_STATUSES.map(s=>`<option ${d&&d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+  </div>
+  <div class="f2">
+    <div class="frow"><label>Invoice #</label><input type="text" id="finvnum" placeholder="e.g. INV-001" value="${d?d.invNum:''}"></div>
+    <div class="frow"><label>Due Date</label><input type="date" id="fdue" value="${d?d.dueDate:t}"></div>
+  </div>
+  <div class="frow"><label>Client Name</label><input type="text" id="fclient" placeholder="e.g. John Smith" value="${d?d.client:''}"></div>
+  <div class="frow"><label>Total Amount ($)</label><input type="number" id="famt" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.amount:''}"></div>
+  <div class="frow"><label>Line Items / Description</label><input type="text" id="fdesc" placeholder="e.g. Labor, Materials, Demo" value="${d?d.desc:''}"></div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button class="btn bsec" onclick="closeModal()">Cancel</button><button class="btn bprim" onclick="saveInv()">Save</button></div>`;}
+
+function invPmtForm(d){const t=todayStr();return `
+  <div class="f2">
+    <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
+    <div class="frow"><label>Amount ($)</label><input type="number" id="famt" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.amount:''}"></div>
+  </div>
+  <div class="frow"><label>Method</label><select id="fmeth">${METHODS.map(m=>`<option ${d&&d.method===m?'selected':''}>${m}</option>`).join('')}</select></div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button class="btn bsec" onclick="closeModal()">Cancel</button><button class="btn bprim" onclick="saveInvPmt()">Save</button></div>`;}
+
+function saveInv(){
+  const amt=parseFloat(g('famt'));
+  if(!g('fclient')||isNaN(amt)){alert('Fill in client name and amount.');return;}
+  if(!DB.invoices)DB.invoices=[];
+  window.lastCo=g('fc');
+  const existing=emode?DB.invoices.find(i=>i.id===eid):null;
+  const r={id:emode?eid:DB.nextId++,co:g('fc'),invNum:g('finvnum'),client:g('fclient'),amount:amt,dueDate:g('fdue'),status:g('fsta'),desc:g('fdesc'),notes:g('fnotes'),pmts:existing?existing.pmts:[]};
+  if(emode)DB.invoices=DB.invoices.map(i=>i.id===eid?r:i);else DB.invoices.push(r);
+  save();closeModal();render();toast(emode?'Updated ✓':'Added ✓');
+}
+function saveInvPmt(){
+  const amt=parseFloat(g('famt'));
+  if(isNaN(amt)){alert('Enter amount.');return;}
+  const inv=DB.invoices.find(i=>i.id===curInvId);if(!inv)return;
+  if(!inv.pmts)inv.pmts=[];
+  const r={id:emode?eid:DB.nextId++,date:g('fd'),amount:amt,method:g('fmeth'),notes:g('fnotes')};
+  if(emode)inv.pmts=inv.pmts.map(p=>p.id===eid?r:p);else inv.pmts.push(r);
+  // Auto-update status
+  const total=inv.pmts.reduce((s,p)=>s+p.amount,0);
+  if(total>=inv.amount)inv.status='Paid';
+  else if(total>0)inv.status='Partial';
+  save();closeModal();renderInvPmts();
+  openInvDetail(curInvId);document.getElementById('subpage-inv').classList.add('open');
+  toast(emode?'Updated ✓':'Payment added ✓');
+}
+function openInvDetail(id){
+  curInvId=id;
+  const i=DB.invoices.find(x=>x.id===id);if(!i)return;
+  const pmtTotal=(i.pmts||[]).reduce((s,p)=>s+p.amount,0);
+  document.getElementById('sub-inv-name').textContent=`#${i.invNum} — ${i.client}`;
+  document.getElementById('sub-inv-info').textContent=`Total: ${fmt(i.amount)} · Paid: ${fmt(pmtTotal)} · Due: ${fmt(i.amount-pmtTotal)}`;
+  renderInvPmts();
+  document.getElementById('subpage-inv').classList.add('open');
+}
+function renderInvPmts(){
+  const i=DB.invoices.find(x=>x.id===curInvId);if(!i)return;
+  const pmts=[...(i.pmts||[])].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('sub-inv-list').innerHTML=pmts.length?pmts.map(p=>`
+    <div class="card">
+      <div class="row">
+        <div class="ico ig">💵</div>
+        <div class="info">
+          <div class="ititle">Payment — ${fmt(p.amount)}</div>
+          <div class="isub"><span>${fd(p.date)}</span><span class="badge bmet">${p.method}</span></div>
+          ${p.notes?`<div class="inote">${p.notes}</div>`:''}
+        </div>
+        <div class="amt cg">+${fmt(p.amount)}</div>
+      </div>
+      <div class="actions"><button class="bedit" onclick="editInvPmt(${p.id})">✏️ Edit</button><button class="bdel" onclick="askDel('invPmt',${p.id})">🗑</button></div>
+    </div>`).join(''):'<div class="empty"><div class="eico">💵</div>No payments yet<br><br>Tap + to add one</div>';
+}
+function openAddInvPmt(){emode=false;eid=null;etype='invPmt';document.getElementById('mtitle').textContent='Add Payment';document.getElementById('mbody').innerHTML=invPmtForm(null);document.getElementById('overlay').classList.add('open');}
+function editInv(id){const d=(DB.invoices||[]).find(i=>i.id===id);if(d)openEdit('invoice',d);}
+function editInvPmt(id){const i=DB.invoices.find(x=>x.id===curInvId);const d=i&&i.pmts?i.pmts.find(p=>p.id===id):null;if(d)openEdit('invPmt',d);}
+
+// ── SUBCONTRACTOR FUNCTIONS ─────────────────────────────────────
+let curSubId=null;
+
+function renderSubs(){
+  let d=DB.subs||[];
+  const f=filters.subs;
+  if(f==='MJ')d=d.filter(s=>s.co==='MJ');
+  else if(f==='Arctic')d=d.filter(s=>s.co==='Arctic');
+  document.getElementById('sub-list').innerHTML=d.length?d.map(s=>{
+    const isMJ=s.co==='MJ';
+    const pmtTotal=(s.pmts||[]).reduce((x,p)=>x+p.amount,0);
+    const remaining=s.contractAmt-pmtTotal;
+    const pct=s.contractAmt>0?Math.min(100,Math.round(pmtTotal/s.contractAmt*100)):0;
+    return `<div class="card">
+      <div class="row">
+        <div class="ico ip">👷</div>
+        <div class="info">
+          <div class="ititle">${s.name}</div>
+          <div class="isub"><span class="badge ${isMJ?'bmj':'bap'}">${isMJ?'MJ':'Arctic'}</span>${s.contact?`<span>📞 ${s.contact}</span>`:''}</div>
+          <div class="isub">${s.workDesc||''}</div>
+          ${s.license?`<div class="inote">🪪 License: ${s.license}${s.licenseExp?' · Exp: '+fd(s.licenseExp):''}</div>`:''}
+          ${s.insurance?`<div class="inote">🛡️ Insurance: ${s.insurance}${s.insuranceExp?' · Exp: '+fd(s.insuranceExp):''}</div>`:''}
+          ${s.contractAmt>0?`<div class="pay-prog"><div class="pay-meta"><span>Paid: ${fmt(pmtTotal)}</span><span>Remaining: ${fmt(remaining)}</span></div><div class="pbar"><div class="pfill${pct>=100?' ':" warn"}" style="width:${pct}%"></div></div></div>`:''}
+        </div>
+        <div class="amt cr">${fmt(s.contractAmt)}</div>
+      </div>
+      <div class="actions">
+        <button class="bview" onclick="openSubDetail(${s.id})">💳 Payments</button>
+        <button class="bedit" onclick="editSub(${s.id})">✏️ Edit</button>
+        <button class="bdel" onclick="askDel('sub',${s.id})">🗑</button>
+      </div>
+    </div>`;}).join(''):'<div class="empty"><div class="eico">👷</div>No subcontractors yet<br><br>Tap + to add one</div>';
+}
+
+function subForm(d){return `
+  <div class="frow"><label>Company</label><select id="fc"><option value="MJ" ${d?d.co==='MJ'?'selected':'':window.lastCo==='MJ'?'selected':''}>MJ Construction</option><option value="Arctic" ${d?d.co==='Arctic'?'selected':'':window.lastCo==='Arctic'?'selected':''}>Arctic Penguin</option></select></div>
+  <div class="frow"><label>Subcontractor Name</label><input type="text" id="fname" placeholder="e.g. Jesus JR" value="${d?d.name:''}"></div>
+  <div class="frow"><label>Contact (phone/email)</label><input type="text" id="fcontact" placeholder="e.g. 555-1234" value="${d?d.contact:''}"></div>
+  <div class="frow"><label>Work Description</label><input type="text" id="fdesc" placeholder="e.g. Plumbing for Bath Remodel" value="${d?d.workDesc:''}"></div>
+  <div class="frow"><label>Contract Amount ($)</label><input type="number" id="famt" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.contractAmt:''}"></div>
+  <div class="f2">
+    <div class="frow"><label>License #</label><input type="text" id="flicense" placeholder="e.g. LIC-12345" value="${d?d.license:''}"></div>
+    <div class="frow"><label>License Expiry</label><input type="date" id="flicexp" value="${d?d.licenseExp:''}"></div>
+  </div>
+  <div class="f2">
+    <div class="frow"><label>Insurance Provider</label><input type="text" id="fins" placeholder="e.g. State Farm" value="${d?d.insurance:''}"></div>
+    <div class="frow"><label>Insurance Expiry</label><input type="date" id="finsexp" value="${d?d.insuranceExp:''}"></div>
+  </div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button class="btn bsec" onclick="closeModal()">Cancel</button><button class="btn bprim" onclick="saveSub()">Save</button></div>`;}
+
+function subPmtForm(d){const t=todayStr();return `
+  <div class="f2">
+    <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
+    <div class="frow"><label>Amount ($)</label><input type="number" id="famt" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.amount:''}"></div>
+  </div>
+  <div class="frow"><label>Method</label><select id="fmeth">${METHODS.map(m=>`<option ${d&&d.method===m?'selected':''}>${m}</option>`).join('')}</select></div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button class="btn bsec" onclick="closeModal()">Cancel</button><button class="btn bprim" onclick="saveSubPmt()">Save</button></div>`;}
+
+function saveSub(){
+  const amt=parseFloat(g('famt'));
+  if(!g('fname')){alert('Enter subcontractor name.');return;}
+  if(!DB.subs)DB.subs=[];
+  window.lastCo=g('fc');
+  const existing=emode?DB.subs.find(s=>s.id===eid):null;
+  const r={id:emode?eid:DB.nextId++,co:g('fc'),name:g('fname'),contact:g('fcontact'),workDesc:g('fdesc'),contractAmt:isNaN(amt)?0:amt,license:g('flicense'),licenseExp:g('flicexp'),insurance:g('fins'),insuranceExp:g('finsexp'),notes:g('fnotes'),pmts:existing?existing.pmts:[]};
+  if(emode)DB.subs=DB.subs.map(s=>s.id===eid?r:s);else DB.subs.push(r);
+  save();closeModal();render();toast(emode?'Updated ✓':'Added ✓');
+}
+function saveSubPmt(){
+  const amt=parseFloat(g('famt'));
+  if(isNaN(amt)){alert('Enter amount.');return;}
+  const sub=DB.subs.find(s=>s.id===curSubId);if(!sub)return;
+  if(!sub.pmts)sub.pmts=[];
+  const r={id:emode?eid:DB.nextId++,date:g('fd'),amount:amt,method:g('fmeth'),notes:g('fnotes')};
+  if(emode)sub.pmts=sub.pmts.map(p=>p.id===eid?r:p);else sub.pmts.push(r);
+  save();closeModal();renderSubPmts();
+  openSubDetail(curSubId);document.getElementById('subpage-sub').classList.add('open');
+  toast(emode?'Updated ✓':'Payment added ✓');
+}
+function openSubDetail(id){
+  curSubId=id;
+  const s=DB.subs.find(x=>x.id===id);if(!s)return;
+  const pmtTotal=(s.pmts||[]).reduce((x,p)=>x+p.amount,0);
+  document.getElementById('sub-sub-name').textContent=s.name;
+  document.getElementById('sub-sub-info').textContent=`Contract: ${fmt(s.contractAmt)} · Paid: ${fmt(pmtTotal)} · Remaining: ${fmt(s.contractAmt-pmtTotal)}`;
+  renderSubPmts();
+  document.getElementById('subpage-sub').classList.add('open');
+}
+function renderSubPmts(){
+  const s=DB.subs.find(x=>x.id===curSubId);if(!s)return;
+  const pmts=[...(s.pmts||[])].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('sub-sub-list').innerHTML=pmts.length?pmts.map(p=>`
+    <div class="card">
+      <div class="row">
+        <div class="ico ir">💸</div>
+        <div class="info">
+          <div class="ititle">Payment — ${fmt(p.amount)}</div>
+          <div class="isub"><span>${fd(p.date)}</span><span class="badge bmet">${p.method}</span></div>
+          ${p.notes?`<div class="inote">${p.notes}</div>`:''}
+        </div>
+        <div class="amt cr">-${fmt(p.amount)}</div>
+      </div>
+      <div class="actions"><button class="bedit" onclick="editSubPmt(${p.id})">✏️ Edit</button><button class="bdel" onclick="askDel('subPmt',${p.id})">🗑</button></div>
+    </div>`).join(''):'<div class="empty"><div class="eico">💸</div>No payments yet<br><br>Tap + to add one</div>';
+}
+function openAddSubPmt(){emode=false;eid=null;etype='subPmt';document.getElementById('mtitle').textContent='Add Payment';document.getElementById('mbody').innerHTML=subPmtForm(null);document.getElementById('overlay').classList.add('open');}
+function editSub(id){const d=(DB.subs||[]).find(s=>s.id===id);if(d)openEdit('sub',d);}
+function editSubPmt(id){const s=DB.subs.find(x=>x.id===curSubId);const d=s&&s.pmts?s.pmts.find(p=>p.id===id):null;if(d)openEdit('subPmt',d);}
+
+render();
 </script>
 </body>
 </html>
