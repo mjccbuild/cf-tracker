@@ -1075,7 +1075,13 @@ function chuyinForm(d){const t=todayStr();return `
 function previewPhoto(input){
   if(!input.files||!input.files[0])return;
   const reader=new FileReader();
-  reader.onload=e=>{pendingPhoto=e.target.result;const p=document.getElementById('photo-preview');if(p){p.src=e.target.result;p.style.display='block';}};
+  reader.onload=e=>{
+    pendingPhoto=e.target.result;
+    const p=document.getElementById('photo-preview');
+    if(p){p.src=e.target.result;p.style.display='block';}
+    const zone=document.querySelector('.upzone div:first-child');
+    if(zone)zone.textContent='📷 Photo ready!';
+  };
   reader.readAsDataURL(input.files[0]);
 }
 
@@ -1164,12 +1170,16 @@ function saveCardTx(){
   save();closeModal();renderCardTxs();toast(emode?'Updated ✓':'Added ✓');
   openCardDetail(curCardId);document.getElementById('subpage-card').classList.add('open');
 }
+let _recSaving=false;
 function saveRec(){
+  if(_recSaving)return;_recSaving=true;
+  setTimeout(()=>_recSaving=false,2000);
   const amt=parseFloat(g('famt'));
-  if(isNaN(amt)||amt===0){toast('⚠️ Enter an amount');return;}
+  if(isNaN(amt)||amt===0){toast('⚠️ Enter an amount');_recSaving=false;return;}
   if(!DB.receipts)DB.receipts=[];
   const existingPhoto=emode&&eid?((DB.receipts.find(r=>r.id===eid)||{}).photo):null;
-  const r={id:emode?eid:DB.nextId++,co:g('fc')||'MJ',date:g('fd')||todayStr(),vendor:g('fvend')||'Vendor',amount:amt,cat:g('fcat'),notes:g('fnotes'),photo:pendingPhoto||existingPhoto||null};
+  const photo=pendingPhoto||existingPhoto||null;
+  const r={id:emode?eid:DB.nextId++,co:g('fc')||'MJ',date:g('fd')||todayStr(),vendor:g('fvend')||'Vendor',amount:amt,cat:g('fcat'),notes:g('fnotes'),photo:photo};
   if(emode)DB.receipts=DB.receipts.map(x=>x.id===eid?r:x);else DB.receipts.push(r);
   pendingPhoto=null;save();closeModal();render();toast(emode?'Updated ✓':'Saved ✓');
 }
@@ -1216,7 +1226,7 @@ function confirmDel(){
   else if(dType==='cardTx'){renderCardTxs();openCardDetail(curCardId);document.getElementById('subpage-card').classList.add('open');}
   else if(dType==='subPmt'){renderSubPmts();openSubDetail(curSubId);document.getElementById('subpage-sub').classList.add('open');}
   else if(dType==='invPmt'){renderInvPmts();openInvDetail(curInvId);document.getElementById('subpage-inv').classList.add('open');}
-  else render();
+  else{render();}
   toast('Deleted ✓');
 }
 
