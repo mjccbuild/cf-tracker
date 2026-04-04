@@ -640,7 +640,7 @@ async function syncFromSheets(){
     render();
     showSyncStatus('Synced ✓');
   }catch(e){
-    showSyncStatus('Saved locally ✓');
+    showSyncStatus('Saved locally ✓'); console.log('Sync error:',e);
   }
 }
 
@@ -656,18 +656,16 @@ async function pushToSheets(){
     invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
     subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
   };
-  const promises=Object.keys(tabs).map(async tab=>{
+  // Send one tab at a time using GET with no-cors mode
+  for(const tab of Object.keys(tabs)){
     const headers=tabs[tab];
-    const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
+    const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
+    const encoded=encodeURIComponent(JSON.stringify(rows));
     try{
-      await fetch(GAS_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body:new URLSearchParams({action:'write',tab,rows:JSON.stringify(rows)}).toString()
-      });
+      await fetch(`${GAS_URL}?action=write&tab=${tab}&rows=${encoded}`,{mode:'no-cors'});
     }catch(e){}
-  });
-  await Promise.all(promises);
+    await new Promise(r=>setTimeout(r,300));
+  }
 }
 
 function showSyncStatus(msg){
