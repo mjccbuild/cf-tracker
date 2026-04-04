@@ -398,9 +398,10 @@ nav button.active{color:var(--blue);}
 
 <script>
 function todayStr(){return new Date().toISOString().split('T')[0];}
+
 // ── CONSTANTS ──────────────────────────────────────────────────
 const KEY='cf_v7';
-const GAS_URL='https://script.google.com/macros/s/AKfycby4kNDPXOk-x371FT3W1ltUkHAlca86XRFrCaDSdOVHc4tyEWi1TeU9F4oLu0gnU7W-/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycbyEoW-9jL8lkPgXRUgQ5D2d9tqybQO9INbfbB0mDAgf2UTp95YseMjymfuEHxj7od6d/exec';
 const CATS=['Legal & Formation','Licensing & Testing','Materials','Labor / Subcontractors','Equipment & Tools','Office & Admin','Gas & Transportation','Bank / Credit Card Fees','Other'];
 const METHODS=['Cash','Credit Card','Debit Card','Check','Bank Transfer','Zelle','Amazon','Card','ACH','Wire'];
 const STATUSES=['Pending','Paid','Partial','Deferred'];
@@ -443,23 +444,22 @@ function seed(){
       {id:31,co:'Arctic',date:'2026-03-21',paidTo:'Arctic',desc:'GPS Tracker — Amazon',amount:35.95,method:'Amazon',notes:''},
     ],
     expenses:[],
-    // Bank accounts: each has a list of transactions
     bank:[
       {id:100,co:'MJ',name:'US Bank Checking',openBal:0,txs:[]},
       {id:101,co:'MJ',name:'Amex Checking',openBal:0,txs:[]},
       {id:102,co:'Arctic',name:'Arctic Penguin Bank',openBal:0,txs:[]},
     ],
-    // Cards: each has a list of transactions
     cards:[
       {id:200,co:'MJ',creditor:'Amex',last4:'',limit:0,txs:[]},
     ],
     receipts:[],
-    chuyin:[], // {id, date, type:'income'|'expense', desc, amount, cat, method, notes}
+    chuyin:[],
     nextId:300
   };
 }
 
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}return seed();}
+
 function save(){
   localStorage.setItem(KEY,JSON.stringify(DB));
   syncToSheets();
@@ -468,41 +468,50 @@ let DB=load();
 
 // ── GOOGLE SHEETS SYNC ─────────────────────────────────────────
 let syncTimer=null;
+
 function syncToSheets(){
   clearTimeout(syncTimer);
-  syncTimer=setTimeout(()=>{
-    const tabs={
-      loans:['id','co','date','paidTo','desc','amount','method','notes'],
-      expenses:['id','co','date','vendor','cat','amount','method','paidBy','status','notes'],
-      bank:['id','co','name','openBal'],
-      cards:['id','co','creditor','last4','limit'],
-      receipts:['id','co','date','vendor','amount','cat','notes'],
-      chuyin:['id','type','date','desc','amount','cat','method','notes'],
-    };
-    Object.keys(tabs).forEach(tab=>{
-      const headers=tabs[tab];
-      const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
-      const params=new URLSearchParams({action:'write',tab,rows:JSON.stringify(rows)});
-      fetch(GAS_URL+'?'+params).catch(()=>{});
-    });
-    // Sync bank transactions
-    DB.bank.forEach(b=>{
-      const txs=b.txs||[];
-      const headers=['id','type','date','desc','amount','method','notes'];
-      const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
-      const params=new URLSearchParams({action:'write',tab:'bank_txs_'+b.id,rows:JSON.stringify(rows)});
-      fetch(GAS_URL+'?'+params).catch(()=>{});
-    });
-    // Sync card transactions
-    DB.cards.forEach(c=>{
-      const txs=c.txs||[];
-      const headers=['id','type','date','desc','amount','cat','notes'];
-      const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?r[h]:''))];
-      const params=new URLSearchParams({action:'write',tab:'card_txs_'+c.id,rows:JSON.stringify(rows)});
-      fetch(GAS_URL+'?'+params).catch(()=>{});
-    });
-    showSyncDot();
+  syncTimer=setTimeout(async ()=>{
+    showSyncStatus('Saving...');
+    try{
+      const tabs={
+        loans:['id','co','date','paidTo','desc','amount','method','notes'],
+        expenses:['id','co','date','vendor','cat','amount','method','paidBy','status','notes'],
+        bank:['id','co','name','openBal'],
+        cards:['id','co','creditor','last4','limit'],
+        receipts:['id','co','date','vendor','amount','cat','notes'],
+        chuyin:['id','type','date','desc','amount','cat','method','notes'],
+      };
+      const writes=[];
+      Object.keys(tabs).forEach(tab=>{
+        const headers=tabs[tab];
+        const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
+        writes.push(postToSheets(tab,rows));
+      });
+      DB.bank.forEach(b=>{
+        const txs=b.txs||[];
+        const headers=['id','type','date','desc','amount','method','notes'];
+        const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
+        writes.push(postToSheets('bank_txs_'+b.id,rows));
+      });
+      DB.cards.forEach(c=>{
+        const txs=c.txs||[];
+        const headers=['id','type','date','desc','amount','cat','notes'];
+        const rows=[headers,...txs.map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
+        writes.push(postToSheets('card_txs_'+c.id,rows));
+      });
+      await Promise.all(writes);
+      showSyncStatus('Saved to Sheet ✓');
+    }catch(e){
+      showSyncStatus('Save failed — offline?');
+    }
   },1500);
+}
+
+async function postToSheets(tab, rows){
+  const url = GAS_URL + '?action=write&tab=' + encodeURIComponent(tab) + '&rows=' + encodeURIComponent(JSON.stringify(rows));
+  const res = await fetch(url);
+  return res.json();
 }
 
 async function syncFromSheets(){
@@ -527,7 +536,6 @@ async function syncFromSheets(){
           return obj;
         });
         if(tab==='bank'){
-          // restore txs from sheet
           for(const b of rows){
             const txRes=await fetch(GAS_URL+'?action=read&tab=bank_txs_'+b.id);
             const txJson=await txRes.json();
@@ -562,9 +570,8 @@ async function syncFromSheets(){
 
 function showSyncStatus(msg){
   const el=document.getElementById('sync-status');
-  if(el){el.textContent=msg;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',3000);}
+  if(el){el.textContent=msg;el.style.opacity='1';setTimeout(()=>el.style.opacity='0',3500);}
 }
-function showSyncDot(){showSyncStatus('Saved to Sheet ✓');}
 
 // ── UTILS ───────────────────────────────────────────────────────
 function fmt(n){return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -700,7 +707,6 @@ function renderBank(){
     </div>`;}).join(''):'<div class="empty"><div class="eico">🏦</div>No accounts yet<br><br>Tap + to add one</div>';
 }
 
-// Bank detail subpage
 let curBankId=null;
 function openBankDetail(id){
   curBankId=id;
@@ -717,8 +723,6 @@ function openBankDetail(id){
 function renderBankTxs(){
   const b=DB.bank.find(x=>x.id===curBankId);if(!b)return;
   const txs=[...(b.txs||[])].sort((a,z)=>z.date.localeCompare(a.date));
-  let running=(b.openBal||0);
-  // recalculate running balance from oldest
   const sorted=[...(b.txs||[])].sort((a,z)=>a.date.localeCompare(z.date));
   const balMap={};let r=b.openBal||0;
   sorted.forEach(t=>{r+=t.type==='deposit'?t.amount:-t.amount;balMap[t.id]=r;});
@@ -1045,7 +1049,6 @@ function saveBankTx(){
   if(!bank.txs)bank.txs=[];
   if(emode)bank.txs=bank.txs.map(t=>t.id===eid?r:t);else bank.txs.push(r);
   save();closeModal();renderBankTxs();toast(emode?'Updated ✓':'Added ✓');
-  // update subpage header
   openBankDetail(curBankId);document.getElementById('subpage-bank').classList.add('open');
 }
 function saveCard(){
@@ -1114,7 +1117,12 @@ function confirmDel(){
   toast('Deleted ✓');
 }
 
-render();
+// Auto-sync on load
+window.addEventListener('load', ()=>{
+  render();
+  // Trigger initial sync to sheet
+  setTimeout(()=>syncToSheets(), 2000);
+});
 </script>
 </body>
 </html>
