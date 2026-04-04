@@ -604,16 +604,20 @@ function syncToSheets(){
 async function syncFromSheets(){
   try{
     showSyncStatus('Syncing...');
-    // Save local data first
     localStorage.setItem(KEY,JSON.stringify(DB));
-    // Push local data to sheet
+    
+    // Step 1: Push local data up
     await pushToSheets();
-    // Now pull from sheet to get other team members entries
+    
+    // Step 2: Pull ALL data from sheet (full refresh)
     const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
+    let gotData=false;
     for(const tab of tabs){
       try{
-        const res=await fetch(GAS_URL+'?action=read&tab='+tab);
-        const json=await res.json();
+        const url=GAS_URL+'?action=read&tab='+encodeURIComponent(tab);
+        const res=await fetch(url,{method:'GET'});
+        const text=await res.text();
+        const json=JSON.parse(text);
         if(json.ok&&json.data&&json.data.length>1){
           const headers=json.data[0];
           const sheetRows=json.data.slice(1).map(row=>{
@@ -627,19 +631,23 @@ async function syncFromSheets(){
             if(obj.contractAmt!==undefined)obj.contractAmt=Number(obj.contractAmt)||0;
             return obj;
           });
-          // Merge: add any entries from sheet that aren't on this device
-          const localIds=new Set((DB[tab]||[]).map(r=>r.id));
-          const newEntries=sheetRows.filter(r=>r.id&&!localIds.has(r.id));
-          if(newEntries.length>0){
-            DB[tab]=[...(DB[tab]||[]),...newEntries];
-          }
+          // Merge with local - keep all unique IDs from both
+          const localArr=DB[tab]||[];
+          const localIds=new Set(localArr.map(r=>r.id));
+          const sheetIds=new Set(sheetRows.map(r=>r.id));
+          // Add sheet entries not on device
+          const fromSheet=sheetRows.filter(r=>!localIds.has(r.id));
+          // Keep local entries (including ones not yet on sheet)
+          DB[tab]=[...localArr,...fromSheet];
+          gotData=true;
         }
       }catch(tabErr){}
     }
+    
     localStorage.setItem(KEY,JSON.stringify(DB));
     render();
     showSyncStatus('Synced ✓');
-    toast('Synced ✓');
+    toast(gotData?'Synced with team ✓':'Saved to sheet ✓');
   }catch(e){
     localStorage.setItem(KEY,JSON.stringify(DB));
     showSyncStatus('Saved locally ✓');
