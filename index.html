@@ -1781,7 +1781,7 @@ function editChuyin2(id){const d=(DB.chuyin2||[]).find(c=>c.id===id);if(d)openEd
 // ── IN-APP NOTIFICATIONS ────────────────────────────────────────
 let lastSeenCount={};
 function checkNotifications(){
-  const tabs=['loans','expenses','chuyin','chuyin2','timeEntries','proposals','invoices','subs'];
+  const tabs=['loans','expenses','chuyin2','timeEntries','proposals','invoices','subs','receipts'];
   let newItems=0;
   tabs.forEach(tab=>{
     const current=(DB[tab]||[]).length;
@@ -1814,7 +1814,7 @@ setInterval(function() {
 async function pullFromSheets() {
   try {
     showSyncStatus('Syncing...');
-    const tabs = ['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
+    const tabs = ['loans','expenses','receipts','chuyin2','proposals','invoices','subs'];
     let gotData = false;
     for (const tab of tabs) {
       try {
