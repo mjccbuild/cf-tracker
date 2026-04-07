@@ -1558,7 +1558,7 @@ setInterval(function() {
   pullFromSheets();
 }, 2 * 60 * 1000);
 
-// Pull only - reads from sheet without overwriting it
+// Pull only - reads from sheet and replaces local data (syncs deletes too)
 async function pullFromSheets() {
   try {
     showSyncStatus('Syncing...');
@@ -1575,14 +1575,12 @@ async function pullFromSheets() {
             headers.forEach((h, i) => { obj[h] = row[i]; });
             if (obj.id) obj.id = Number(obj.id);
             if (obj.amount !== undefined && obj.amount !== '') obj.amount = Number(obj.amount) || 0;
+            if (obj.contractAmt !== undefined) obj.contractAmt = Number(obj.contractAmt) || 0;
             return obj;
           });
-          // Merge: keep local + add any new from sheet
-          const localArr = DB[tab] || [];
-          const localIds = new Set(localArr.map(r => r.id));
-          const fromSheet = sheetRows.filter(r => !localIds.has(r.id));
-          DB[tab] = [...localArr, ...fromSheet];
-          if (fromSheet.length > 0) gotData = true;
+          // REPLACE local data with sheet data so deletes sync properly
+          DB[tab] = sheetRows;
+          gotData = true;
         }
       } catch(e) {}
     }
