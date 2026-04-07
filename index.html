@@ -1549,14 +1549,50 @@ render();
 // Auto-sync on load — pull latest from Google Sheets every time app opens
 window.addEventListener('load', function() {
   setTimeout(function() {
-    syncFromSheets();
+    pullFromSheets();
   }, 1500);
 });
 
-// Also auto-sync every 5 minutes while app is open
+// Auto-pull every 2 minutes while app is open
 setInterval(function() {
-  syncFromSheets();
-}, 5 * 60 * 1000);
+  pullFromSheets();
+}, 2 * 60 * 1000);
+
+// Pull only - reads from sheet without overwriting it
+async function pullFromSheets() {
+  try {
+    showSyncStatus('Syncing...');
+    const tabs = ['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
+    let gotData = false;
+    for (const tab of tabs) {
+      try {
+        const res = await fetch(GAS_URL + '?action=read&tab=' + encodeURIComponent(tab));
+        const json = await res.json();
+        if (json.ok && json.data && json.data.length > 1) {
+          const headers = json.data[0];
+          const sheetRows = json.data.slice(1).map(row => {
+            const obj = {};
+            headers.forEach((h, i) => { obj[h] = row[i]; });
+            if (obj.id) obj.id = Number(obj.id);
+            if (obj.amount !== undefined && obj.amount !== '') obj.amount = Number(obj.amount) || 0;
+            return obj;
+          });
+          // Merge: keep local + add any new from sheet
+          const localArr = DB[tab] || [];
+          const localIds = new Set(localArr.map(r => r.id));
+          const fromSheet = sheetRows.filter(r => !localIds.has(r.id));
+          DB[tab] = [...localArr, ...fromSheet];
+          if (fromSheet.length > 0) gotData = true;
+        }
+      } catch(e) {}
+    }
+    localStorage.setItem(KEY, JSON.stringify(DB));
+    render();
+    showSyncStatus(gotData ? 'Updated ✓' : 'Up to date ✓');
+  } catch(e) {
+    showSyncStatus('');
+  }
+}
 </script>
 </body>
 </html>
