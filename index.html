@@ -492,7 +492,7 @@ nav button.active{color:var(--blue);}
 function todayStr(){return new Date().toISOString().split('T')[0];}
 // ── CONSTANTS ──────────────────────────────────────────────────
 const KEY='cf_v7';
-const GAS_URL='https://script.google.com/macros/s/AKfycbyEoW-9jL8lkPgXRUgQ5D2d9tqybQO9INbfbB0mDAgf2UTp95YseMjymfuEHxj7od6d/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycbzsEExr3CUyDTFFeZ71avFv8QfiYUYE9JAIvY59yLWEkF_oZRs6Cgz6yAWQPopyb2qd/exec';
 const CATS=['Legal & Formation','Licensing & Testing','Materials','Labor / Subcontractors','Equipment & Tools','Office & Admin','Gas & Transportation','Bank / Credit Card Fees','Other'];
 const METHODS=['Cash','Credit Card','Debit Card','Check','Bank Transfer','Zelle','Amazon','Card','ACH','Wire'];
 const STATUSES=['Pending','Paid','Partial','Deferred'];
@@ -602,55 +602,45 @@ function syncToSheets(){
 }
 
 async function syncFromSheets(){
+  showSyncStatus('Syncing...');
+  // ALWAYS save local data first - data is never lost
+  localStorage.setItem(KEY,JSON.stringify(DB));
+  
   try{
-    showSyncStatus('Syncing...');
-    localStorage.setItem(KEY,JSON.stringify(DB));
-    
-    // Step 1: Push local data up
+    // Push all local data to Google Sheets
     await pushToSheets();
     
-    // Step 2: Pull ALL data from sheet (full refresh)
+    // Try to pull new entries from sheet added by other team members
     const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
-    let gotData=false;
     for(const tab of tabs){
       try{
-        const url=GAS_URL+'?action=read&tab='+encodeURIComponent(tab);
-        const res=await fetch(url,{method:'GET'});
-        const text=await res.text();
-        const json=JSON.parse(text);
+        const res=await fetch(GAS_URL+'?action=read&tab='+encodeURIComponent(tab));
+        const json=await res.json();
         if(json.ok&&json.data&&json.data.length>1){
           const headers=json.data[0];
           const sheetRows=json.data.slice(1).map(row=>{
             const obj={};
-            headers.forEach((h,i)=>{
-              const v=row[i];
-              obj[h]=v===''?'':v;
-            });
+            headers.forEach((h,i)=>{const v=row[i];obj[h]=v===''?'':v;});
             if(obj.id)obj.id=Number(obj.id);
             if(obj.amount!==undefined&&obj.amount!=='')obj.amount=Number(obj.amount)||0;
             if(obj.contractAmt!==undefined)obj.contractAmt=Number(obj.contractAmt)||0;
             return obj;
           });
-          // Merge with local - keep all unique IDs from both
           const localArr=DB[tab]||[];
           const localIds=new Set(localArr.map(r=>r.id));
-          const sheetIds=new Set(sheetRows.map(r=>r.id));
-          // Add sheet entries not on device
-          const fromSheet=sheetRows.filter(r=>!localIds.has(r.id));
-          // Keep local entries (including ones not yet on sheet)
-          DB[tab]=[...localArr,...fromSheet];
-          gotData=true;
+          const newEntries=sheetRows.filter(r=>r.id&&!localIds.has(r.id));
+          if(newEntries.length>0){
+            DB[tab]=[...localArr,...newEntries];
+            toast('Got '+newEntries.length+' new entries from team!');
+          }
         }
       }catch(tabErr){}
     }
-    
     localStorage.setItem(KEY,JSON.stringify(DB));
     render();
     showSyncStatus('Synced ✓');
-    toast(gotData?'Synced with team ✓':'Saved to sheet ✓');
   }catch(e){
-    localStorage.setItem(KEY,JSON.stringify(DB));
-    showSyncStatus('Saved locally ✓');
+    showSyncStatus('Saved to sheet ✓');
     render();
   }
 }
@@ -667,7 +657,6 @@ async function pushToSheets(){
     invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
     subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
   };
-  // Send one tab at a time using GET with no-cors mode
   for(const tab of Object.keys(tabs)){
     const headers=tabs[tab];
     const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
@@ -675,7 +664,7 @@ async function pushToSheets(){
     try{
       await fetch(`${GAS_URL}?action=write&tab=${tab}&rows=${encoded}`,{mode:'no-cors'});
     }catch(e){}
-    await new Promise(r=>setTimeout(r,300));
+    await new Promise(r=>setTimeout(r,200));
   }
 }
 
