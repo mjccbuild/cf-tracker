@@ -558,7 +558,7 @@ function seed(){
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}return seed();}
 function save(){
   localStorage.setItem(KEY,JSON.stringify(DB));
-  syncToSheets();
+  // Do NOT auto-sync — only sync when user taps Sync button
 }
 let DB=load();
 
