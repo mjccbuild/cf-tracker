@@ -1545,6 +1545,18 @@ function editSub(id){const d=(DB.subs||[]).find(s=>s.id===id);if(d)openEdit('sub
 function editSubPmt(id){const s=DB.subs.find(x=>x.id===curSubId);const d=s&&s.pmts?s.pmts.find(p=>p.id===id):null;if(d)openEdit('subPmt',d);}
 
 render();
+
+// Auto-sync on load — pull latest from Google Sheets every time app opens
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    syncFromSheets();
+  }, 1500);
+});
+
+// Also auto-sync every 5 minutes while app is open
+setInterval(function() {
+  syncFromSheets();
+}, 5 * 60 * 1000);
 </script>
 </body>
 </html>
