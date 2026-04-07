@@ -561,7 +561,7 @@ nav button.active{color:var(--blue);}
 function todayStr(){return new Date().toISOString().split('T')[0];}
 // ── CONSTANTS ──────────────────────────────────────────────────
 const KEY='cf_v7';
-const GAS_URL='https://script.google.com/macros/s/AKfycbz8ObB5iP1zteCmRvUz1V8LZWBaj6-VNzbKyqvXaNilfB1M-JHX1bK4gRCwtsI4IbWZ/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycbw367CXG-Tpo5uV6gRdevuCF3g91gS42glP-Iodle9UYaTbKdjqz-IdzfxmMFFUXm0T/exec';
 const CATS=['Legal & Formation','Licensing & Testing','Materials','Labor / Subcontractors','Equipment & Tools','Office & Admin','Gas & Transportation','Bank / Credit Card Fees','Other'];
 const METHODS=['Cash','Credit Card','Debit Card','Check','Bank Transfer','Zelle','Amazon','Card','ACH','Wire'];
 const STATUSES=['Pending','Paid','Partial','Deferred'];
@@ -627,11 +627,20 @@ function seed(){
 }
 
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}return seed();}
+function migrate(db){
+  // Move any old chuyin data to chuyin2 if not already there
+  if(db.chuyin&&db.chuyin.length>0&&(!db.chuyin2||db.chuyin2.length===0)){
+    db.chuyin2=db.chuyin.map(c=>({...c,miles:0,crew:''}));
+  }
+  // Always clear old chuyin so it stops syncing
+  db.chuyin=[];
+  return db;
+}
 function save(){
   localStorage.setItem(KEY,JSON.stringify(DB));
   // Do NOT auto-sync — only sync when user taps Sync button
 }
-let DB=load();
+let DB=migrate(load());
 
 // ── GOOGLE SHEETS SYNC ─────────────────────────────────────────
 let syncTimer=null;
