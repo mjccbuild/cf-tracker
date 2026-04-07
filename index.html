@@ -1169,7 +1169,7 @@ function openAdd(){
   emode=false;eid=null;pendingPhoto=null;if(!window.lastCo)window.lastCo='MJ';
   const map={dashboard:'loan',loans:'loan',expenses:'expense',bank:'bank',cards:'card',receipts:'receipt',chuyin:'chuyin2Entry',chuyin2:'chuyin2Entry',proposals:'proposal',invoices:'invoice',subs:'sub',time:'timeEntry'};
   const titles={loan:'Add Transaction',expense:'Add Expense',bank:'Add Bank Account',card:'Add Credit Card',receipt:'Add Receipt',chuyin:'Add Chuyin Entry',proposal:'Add Proposal',invoice:'Add Invoice',sub:'Add Subcontractor',timeEntry:'Log Time',chuyin2Entry:'Add Chuyin Entry'};
-  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,proposal:propForm,invoice:invForm,sub:subForm,timeEntry:timeEntryForm,chuyin2Entry:chuyin2Form};
+  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyin2Form,proposal:propForm,invoice:invForm,sub:subForm,timeEntry:timeEntryForm,chuyin2Entry:chuyin2Form};
   etype=map[curPage];
   document.getElementById('mtitle').textContent=titles[etype];
   document.getElementById('mbody').innerHTML=forms[etype](null);
@@ -1674,7 +1674,7 @@ function timeEntryForm(d){const t=todayStr();
     <div class="frow"><label>Team Member</label><select id="ftm">${TEAM_MEMBERS.map(m=>`<option ${d&&d.name===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="frow"><label>Company</label><select id="fco">${TIME_COS.map(c=>`<option ${d&&d.co===c?'selected':''}>${c}</option>`).join('')}</select></div>
   </div>
-  <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
+  <div class="frow"><label>Date</label><input type="date" id="ftdate" value="${d?d.date:t}"></div>
   <div class="frow"><label>Hours Worked — Enter like: 1.45 = 1hr 45min · 2 = 2hrs · 38.30 = 38hrs 30min</label><input type="number" id="fdechr" placeholder="e.g. 1.45 = 1hr 45min" onchange="updateHoursDisplay()" oninput="updateHoursDisplay()" step="0.01" inputmode="decimal" value="${decVal}" style="font-size:18px;font-weight:600"></div>
   <div class="frow" style="background:#eef0f7;border-radius:10px;padding:10px;text-align:center"><span id="fhours-display" style="font-size:13px;color:#555a7a">${d?Math.floor(d.minutes/60)+'h '+d.minutes%60+'m':'Enter hours above to see total'}</span></div>
   <div class="frow"><label>Project / Task</label><input type="text" id="fproject" placeholder="e.g. Bath Remodel, Office Admin, App Work" value="${d?d.project:''}"></div>
@@ -1704,7 +1704,7 @@ function saveTimeEntry(){
   const minutes=(hrs*60)+mins;
   if(minutes<=0){toast('⚠️ Hours must be greater than 0');return;}
   if(!DB.timeEntries)DB.timeEntries=[];
-  const r={id:emode?eid:DB.nextId++,name,co:document.getElementById('fco').value,date:document.getElementById('fd').value||todayStr(),minutes,project:document.getElementById('fproject').value,rate:parseFloat(document.getElementById('frate').value)||0,notes:document.getElementById('fnotes').value};
+  const r={id:emode?eid:DB.nextId++,name,co:document.getElementById('fco').value,date:document.getElementById('ftdate')?document.getElementById('ftdate').value:todayStr(),minutes,project:document.getElementById('fproject').value,rate:parseFloat(document.getElementById('frate').value)||0,notes:document.getElementById('fnotes').value};
   if(emode)DB.timeEntries=DB.timeEntries.map(t=>t.id===eid?r:t);else DB.timeEntries.push(r);
   save();closeModal();render();toast(emode?'Updated ✓':'Time logged ✓');
 }
