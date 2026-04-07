@@ -1696,14 +1696,15 @@ function updateHoursDisplay(){
 
 function saveTimeEntry(){
   const name=document.getElementById('ftm').value;
-  const decVal=parseFloat(document.getElementById('fdechr').value)||0;
-  if(!decVal||decVal<=0){toast('⚠️ Enter hours worked e.g. 1.45 for 1hr 45min');return;}
-  const hrs=Math.floor(decVal);
-  const rawMins=Math.round((decVal-hrs)*100);
-  const mins=Math.min(rawMins,59); // cap at 59 minutes
+  const decVal=parseFloat(document.getElementById('fdechr').value);
+  if(!decVal||isNaN(decVal)){toast('⚠️ Enter hours e.g. 1.45 = 1hr 45min');return;}
+  const hrs=Math.floor(Math.abs(decVal));
+  const rawMins=Math.round((Math.abs(decVal)-hrs)*100);
+  const mins=Math.min(rawMins,59);
   const minutes=(hrs*60)+mins;
+  if(minutes<=0){toast('⚠️ Hours must be greater than 0');return;}
   if(!DB.timeEntries)DB.timeEntries=[];
-  const r={id:emode?eid:DB.nextId++,name,co:document.getElementById('fco').value,date:document.getElementById('fd').value||todayStr(),clockIn:document.getElementById('fcin').value,clockOut:document.getElementById('fcout').value,minutes,project:document.getElementById('fproject').value,rate:parseFloat(document.getElementById('frate').value)||0,notes:document.getElementById('fnotes').value};
+  const r={id:emode?eid:DB.nextId++,name,co:document.getElementById('fco').value,date:document.getElementById('fd').value||todayStr(),minutes,project:document.getElementById('fproject').value,rate:parseFloat(document.getElementById('frate').value)||0,notes:document.getElementById('fnotes').value};
   if(emode)DB.timeEntries=DB.timeEntries.map(t=>t.id===eid?r:t);else DB.timeEntries.push(r);
   save();closeModal();render();toast(emode?'Updated ✓':'Time logged ✓');
 }
