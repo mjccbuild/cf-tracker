@@ -660,11 +660,16 @@ async function pushToSheets(){
   for(const tab of Object.keys(tabs)){
     const headers=tabs[tab];
     const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
-    const encoded=encodeURIComponent(JSON.stringify(rows));
     try{
-      await fetch(`${GAS_URL}?action=write&tab=${tab}&rows=${encoded}`,{mode:'no-cors'});
-    }catch(e){}
-    await new Promise(r=>setTimeout(r,200));
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({action:'write', tab:tab, rows:JSON.stringify(rows)})
+      });
+      const json = await res.json();
+      if(!json.ok) console.log('Write error:', tab, json.error);
+    }catch(e){ console.log('Fetch error:', tab, e); }
+    await new Promise(r=>setTimeout(r,300));
   }
 }
 
