@@ -686,7 +686,7 @@ async function syncFromSheets(){
   try{
     await pushToSheets();
     // Pull latest from sheet
-    const tabs=['loans','expenses','receipts','proposals','invoices','subs','timeEntries','chuyin2'];
+    const tabs=['loans','expenses','receipts','proposals','invoices','subs','timeEntries','Chuyin Delivery'];
     for(const tab of tabs){
       try{
         const res=await fetch(GAS_URL+'?action=read&tab='+encodeURIComponent(tab));
@@ -722,13 +722,14 @@ async function pushToSheets(){
     receipts:['id','co','date','vendor','amount','cat','notes'],
     proposals:['id','co','client','contact','desc','amount','dateSent','dateExpiry','status','notes'],
     timeEntries:['id','name','co','date','minutes','project','rate','notes'],
-    chuyin2:['id','type','date','cat','desc','amount','miles','crew','notes'],
+    'Chuyin Delivery':['id','type','date','cat','desc','amount','miles','crew','notes'],
     invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
     subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
   };
   for(const tab of Object.keys(tabs)){
     const headers=tabs[tab];
-    const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
+    const dbKey = tab === 'Chuyin Delivery' ? 'chuyin2' : (tab === 'timeEntries' ? 'timeEntries' : tab);
+    const rows=[headers,...(DB[dbKey]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
     const url=GAS_URL+'?action=write&tab='+encodeURIComponent(tab)+'&rows='+encodeURIComponent(JSON.stringify(rows));
     // Use no-cors fetch to bypass CORS - fire and forget
     try{
@@ -1790,7 +1791,7 @@ function editChuyin2(id){const d=(DB.chuyin2||[]).find(c=>c.id===id);if(d)openEd
 // ── IN-APP NOTIFICATIONS ────────────────────────────────────────
 let lastSeenCount={};
 function checkNotifications(){
-  const tabs=['loans','expenses','chuyin2','timeEntries','proposals','invoices','subs','receipts'];
+  const tabs=['loans','expenses','Chuyin Delivery','timeEntries','proposals','invoices','subs','receipts'];
   let newItems=0;
   tabs.forEach(tab=>{
     const current=(DB[tab]||[]).length;
@@ -1823,7 +1824,7 @@ setInterval(function() {
 async function pullFromSheets() {
   try {
     showSyncStatus('Syncing...');
-    const tabs = ['loans','expenses','receipts','chuyin2','proposals','invoices','subs'];
+    const tabs = ['loans','expenses','receipts','Chuyin Delivery','proposals','invoices','subs'];
     let gotData = false;
     for (const tab of tabs) {
       try {
