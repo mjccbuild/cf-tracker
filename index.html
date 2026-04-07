@@ -603,14 +603,10 @@ function syncToSheets(){
 
 async function syncFromSheets(){
   showSyncStatus('Syncing...');
-  // ALWAYS save local data first - data is never lost
   localStorage.setItem(KEY,JSON.stringify(DB));
-  
   try{
-    // Push all local data to Google Sheets
     await pushToSheets();
-    
-    // Try to pull new entries from sheet added by other team members
+    // Pull latest from sheet
     const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
     for(const tab of tabs){
       try{
@@ -620,28 +616,21 @@ async function syncFromSheets(){
           const headers=json.data[0];
           const sheetRows=json.data.slice(1).map(row=>{
             const obj={};
-            headers.forEach((h,i)=>{const v=row[i];obj[h]=v===''?'':v;});
+            headers.forEach((h,i)=>{obj[h]=row[i];});
             if(obj.id)obj.id=Number(obj.id);
             if(obj.amount!==undefined&&obj.amount!=='')obj.amount=Number(obj.amount)||0;
-            if(obj.contractAmt!==undefined)obj.contractAmt=Number(obj.contractAmt)||0;
             return obj;
           });
-          const localArr=DB[tab]||[];
-          const localIds=new Set(localArr.map(r=>r.id));
-          const newEntries=sheetRows.filter(r=>r.id&&!localIds.has(r.id));
-          if(newEntries.length>0){
-            DB[tab]=[...localArr,...newEntries];
-            toast('Got '+newEntries.length+' new entries from team!');
-          }
+          DB[tab]=sheetRows;
         }
-      }catch(tabErr){}
+      }catch(e){}
     }
     localStorage.setItem(KEY,JSON.stringify(DB));
     render();
     showSyncStatus('Synced ✓');
+    toast('Synced ✓');
   }catch(e){
-    showSyncStatus('Saved to sheet ✓');
-    render();
+    showSyncStatus('Error syncing');
   }
 }
 
@@ -660,15 +649,12 @@ async function pushToSheets(){
   for(const tab of Object.keys(tabs)){
     const headers=tabs[tab];
     const rows=[headers,...(DB[tab]||[]).map(r=>headers.map(h=>r[h]!==undefined?String(r[h]):''))];
+    const url=GAS_URL+'?action=write&tab='+encodeURIComponent(tab)+'&rows='+encodeURIComponent(JSON.stringify(rows));
     try{
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: new URLSearchParams({action:'write', tab:tab, rows:JSON.stringify(rows)})
-      });
-      const json = await res.json();
-      if(!json.ok) console.log('Write error:', tab, json.error);
-    }catch(e){ console.log('Fetch error:', tab, e); }
+      const res=await fetch(url);
+      const json=await res.json();
+      if(!json.ok) console.log('Write error:',tab,json.error);
+    }catch(e){console.log('Error:',tab,e);}
     await new Promise(r=>setTimeout(r,300));
   }
 }
