@@ -644,7 +644,6 @@ function syncToSheets(){
       bank:['id','co','name','openBal'],
       cards:['id','co','creditor','last4','limit'],
       receipts:['id','co','date','vendor','amount','cat','notes'],
-      chuyin:['id','type','date','desc','amount','cat','method','notes'],
     };
     Object.keys(tabs).forEach(tab=>{
       const headers=tabs[tab];
@@ -678,7 +677,7 @@ async function syncFromSheets(){
   try{
     await pushToSheets();
     // Pull latest from sheet
-    const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs','timeEntries','chuyin2'];
+    const tabs=['loans','expenses','receipts','proposals','invoices','subs','timeEntries','chuyin2'];
     for(const tab of tabs){
       try{
         const res=await fetch(GAS_URL+'?action=read&tab='+encodeURIComponent(tab));
@@ -712,9 +711,8 @@ async function pushToSheets(){
     bank:['id','co','name','openBal'],
     cards:['id','co','creditor','last4','limit'],
     receipts:['id','co','date','vendor','amount','cat','notes'],
-    chuyin:['id','type','date','desc','amount','cat','method','notes'],
     proposals:['id','co','client','contact','desc','amount','dateSent','dateExpiry','status','notes'],
-    timeEntries:['id','name','co','date','clockIn','clockOut','minutes','project','rate','notes'],
+    timeEntries:['id','name','co','date','minutes','project','rate','notes'],
     chuyin2:['id','type','date','cat','desc','amount','miles','crew','notes'],
     invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
     subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
