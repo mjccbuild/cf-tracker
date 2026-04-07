@@ -413,6 +413,66 @@ nav button.active{color:var(--blue);}
   <button class="sub-fab" onclick="openAddInvPmt()">+</button>
 </div>
 
+
+<!-- ═══ TIME TRACKING ═══ -->
+<div id="page-time" class="page">
+  <div class="hdr blue"><h1>⏰ Time Tracking</h1><p>Clock in & out for all team members</p></div>
+  <div class="tabs" style="flex-wrap:wrap;gap:6px">
+    <div class="tab tall" onclick="filterTab('time','all',this)">All</div>
+    <div class="tab" onclick="filterTab('time','MJ',this)">MJ</div>
+    <div class="tab" onclick="filterTab('time','Arctic',this)">Arctic</div>
+    <div class="tab" onclick="filterTab('time','Holding',this)">Holding</div>
+    <div class="tab" onclick="filterTab('time','Chuyin',this)">Chuyin</div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="stats" style="padding:8px 16px">
+    <div class="stat blue full">
+      <div class="stat-lbl">Total Hours This Week</div>
+      <div class="stat-val" id="time-total">0h 0m</div>
+      <div class="stat-sub" id="time-sub">All team members</div>
+    </div>
+  </div>
+  <div class="list" id="time-list"></div>
+</div>
+
+<!-- ═══ CHUYIN DETAIL ═══ -->
+<div id="page-chuyin2" class="page">
+  <div class="hdr green"><h1>🚗 Chuyin Delivery</h1><p>Full delivery business tracker</p></div>
+  <div class="tabs" style="flex-wrap:wrap;">
+    <div class="tab tact" onclick="filterTab('chuyin2','all',this)">All</div>
+    <div class="tab" onclick="filterTab('chuyin2','income',this)">Income</div>
+    <div class="tab" onclick="filterTab('chuyin2','expense',this)">Expenses</div>
+    <div class="tab" onclick="filterTab('chuyin2','fuel',this)">Fuel</div>
+    <div class="tab" onclick="filterTab('chuyin2','crew',this)">Crew</div>
+    <div class="tab" onclick="filterTab('chuyin2','truck',this)">Truck</div>
+  </div>
+  <div style="height:6px"></div>
+  <div class="stats" style="padding:8px 16px">
+    <div class="stat green full">
+      <div class="stat-lbl">Net Income</div>
+      <div class="stat-val" id="ch2-net">$0</div>
+      <div class="stat-sub" id="ch2-sub">earned − all expenses</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Total Earned</div>
+      <div class="stat-val cg" id="ch2-earn">$0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Total Expenses</div>
+      <div class="stat-val cr" id="ch2-exp">$0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Total Miles</div>
+      <div class="stat-val cb" id="ch2-miles">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Fuel Cost</div>
+      <div class="stat-val cr" id="ch2-fuel">$0</div>
+    </div>
+  </div>
+  <div class="list" id="ch2-list"></div>
+</div>
+
 <!-- NAV -->
 <nav>
   <button class="active" onclick="showPage('dashboard',this)">
@@ -439,10 +499,7 @@ nav button.active{color:var(--blue);}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 2h12l4 4v16H4V2z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/></svg>
     Receipts
   </button>
-  <button onclick="showPage('chuyin',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v9a2 2 0 01-2 2h-3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
-    Chuyin
-  </button>
+
   <button onclick="showPage('proposals',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     Proposals
@@ -454,6 +511,14 @@ nav button.active{color:var(--blue);}
   <button onclick="showPage('subs',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
     Subs
+  </button>
+  <button onclick="showPage('time',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Time
+  </button>
+  <button onclick="showPage('chuyin2',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v9a2 2 0 01-2 2h-3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+    Chuyin
   </button>
 </nav>
 
@@ -487,6 +552,10 @@ nav button.active{color:var(--blue);}
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="notif-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#1a56ff;color:#fff;padding:12px 16px;font-size:13px;font-weight:600;z-index:500;text-align:center;animation:fu .3s ease;">
+  <span id="notif-text"></span>
+  <button onclick="document.getElementById('notif-banner').style.display='none'" style="background:none;border:none;color:#fff;float:right;font-size:16px;cursor:pointer;">✕</button>
+</div>
 
 <script>
 function todayStr(){return new Date().toISOString().split('T')[0];}
@@ -551,7 +620,9 @@ function seed(){
     invoices:[],  // {id,co,invNum,client,amount,dueDate,status,lineItems,pmts,notes}
     subs:[],      // {id,co,name,contact,workDesc,contractAmt,pmts,notes}
     chuyin:[], // {id, date, type:'income'|'expense', desc, amount, cat, method, notes}
-    nextId:300
+    nextId:300,
+    timeEntries:[], // {id,name,co,date,clockIn,clockOut,hours,project,notes}
+    chuyin2:[]      // {id,date,type,desc,amount,miles,cat,crew,notes}
   };
 }
 
@@ -607,7 +678,7 @@ async function syncFromSheets(){
   try{
     await pushToSheets();
     // Pull latest from sheet
-    const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs'];
+    const tabs=['loans','expenses','receipts','chuyin','proposals','invoices','subs','timeEntries','chuyin2'];
     for(const tab of tabs){
       try{
         const res=await fetch(GAS_URL+'?action=read&tab='+encodeURIComponent(tab));
@@ -643,6 +714,8 @@ async function pushToSheets(){
     receipts:['id','co','date','vendor','amount','cat','notes'],
     chuyin:['id','type','date','desc','amount','cat','method','notes'],
     proposals:['id','co','client','contact','desc','amount','dateSent','dateExpiry','status','notes'],
+    timeEntries:['id','name','co','date','clockIn','clockOut','minutes','project','rate','notes'],
+    chuyin2:['id','type','date','cat','desc','amount','miles','crew','notes'],
     invoices:['id','co','invNum','client','amount','dueDate','status','desc','notes'],
     subs:['id','co','name','contact','workDesc','contractAmt','license','licenseExp','insurance','insuranceExp','notes']
   };
@@ -672,7 +745,7 @@ function g(id){const el=document.getElementById(id);return el?el.value:'';}
 
 // ── NAVIGATION ──────────────────────────────────────────────────
 let curPage='dashboard';
-const filters={loans:'all',expenses:'all',bank:'all',cards:'all',receipts:'all',chuyin:'all',proposals:'all',invoices:'all',subs:'all'};
+const filters={loans:'all',expenses:'all',bank:'all',cards:'all',receipts:'all',chuyin:'all',proposals:'all',invoices:'all',subs:'all',time:'all',chuyin2:'all'};
 
 function showPage(name,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -684,7 +757,8 @@ function showPage(name,btn){
 
 function filterTab(page,val,btn){
   filters[page]=val;
-  const tabs=document.querySelectorAll('#page-'+page+' .tab');
+  const pageId=page==='chuyin2'?'chuyin2':page;
+  const tabs=document.querySelectorAll('#page-'+pageId+' .tab');
   tabs.forEach(t=>{t.className='tab';});
   if(val==='all')btn.className='tab tall';
   else if(val==='MJ')btn.className='tab tmj';
@@ -699,10 +773,12 @@ function render(){
   else if(curPage==='bank')renderBank();
   else if(curPage==='cards')renderCards();
   else if(curPage==='receipts')renderReceipts();
-  else if(curPage==='chuyin')renderChuyin();
+  else if(curPage==='chuyin')renderChuyin2();
+  else if(curPage==='chuyin2')renderChuyin2();
   else if(curPage==='proposals')renderProposals();
   else if(curPage==='invoices')renderInvoices();
   else if(curPage==='subs')renderSubs();
+  else if(curPage==='time')renderTime();
 }
 
 // ── DASHBOARD ───────────────────────────────────────────────────
@@ -715,8 +791,8 @@ function renderDash(){
   document.getElementById('d-mjc').textContent=DB.loans.filter(l=>l.co==='MJ').length+' transactions';
   document.getElementById('d-ap').textContent=fmt(apT);
   document.getElementById('d-apc').textContent=DB.loans.filter(l=>l.co==='Arctic').length+' transactions';
-  const chEarn=(DB.chuyin||[]).filter(c=>c.type==='income').reduce((s,c)=>s+c.amount,0);
-  const chExp=(DB.chuyin||[]).filter(c=>c.type==='expense').reduce((s,c)=>s+c.amount,0);
+  const chEarn=(DB.chuyin2||[]).filter(c=>c.type==='income').reduce((s,c)=>s+c.amount,0);
+  const chExp=(DB.chuyin2||[]).filter(c=>c.type==='expense').reduce((s,c)=>s+c.amount,0);
   document.getElementById('d-ch-net').textContent=fmt(chEarn-chExp);
   document.getElementById('d-ch-sub').textContent=`${fmt(chEarn)} earned − ${fmt(chExp)} expenses`;
   const recent=[...DB.loans].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
@@ -1091,9 +1167,9 @@ function previewPhoto(input){
 let emode=false,eid=null,etype=null;
 function openAdd(){
   emode=false;eid=null;pendingPhoto=null;if(!window.lastCo)window.lastCo='MJ';
-  const map={dashboard:'loan',loans:'loan',expenses:'expense',bank:'bank',cards:'card',receipts:'receipt',chuyin:'chuyin',proposals:'proposal',invoices:'invoice',subs:'sub'};
-  const titles={loan:'Add Transaction',expense:'Add Expense',bank:'Add Bank Account',card:'Add Credit Card',receipt:'Add Receipt',chuyin:'Add Chuyin Entry',proposal:'Add Proposal',invoice:'Add Invoice',sub:'Add Subcontractor'};
-  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,proposal:propForm,invoice:invForm,sub:subForm};
+  const map={dashboard:'loan',loans:'loan',expenses:'expense',bank:'bank',cards:'card',receipts:'receipt',chuyin:'chuyin2Entry',chuyin2:'chuyin2Entry',proposals:'proposal',invoices:'invoice',subs:'sub',time:'timeEntry'};
+  const titles={loan:'Add Transaction',expense:'Add Expense',bank:'Add Bank Account',card:'Add Credit Card',receipt:'Add Receipt',chuyin:'Add Chuyin Entry',proposal:'Add Proposal',invoice:'Add Invoice',sub:'Add Subcontractor',timeEntry:'Log Time',chuyin2Entry:'Add Chuyin Entry'};
+  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,proposal:propForm,invoice:invForm,sub:subForm,timeEntry:timeEntryForm,chuyin2Entry:chuyin2Form};
   etype=map[curPage];
   document.getElementById('mtitle').textContent=titles[etype];
   document.getElementById('mbody').innerHTML=forms[etype](null);
@@ -1113,8 +1189,8 @@ function openAddCardTx(){
 }
 function openEdit(type,d){
   emode=true;eid=d.id;etype=type;pendingPhoto=null;
-  const titles={loan:'Edit Transaction',expense:'Edit Expense',bank:'Edit Account',card:'Edit Card',receipt:'Edit Receipt',chuyin:'Edit Entry',bankTx:'Edit Transaction',cardTx:'Edit Transaction',proposal:'Edit Proposal',invoice:'Edit Invoice',sub:'Edit Subcontractor',subPmt:'Edit Payment',invPmt:'Edit Payment'};
-  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,bankTx:bankTxForm,cardTx:cardTxForm,proposal:propForm,invoice:invForm,sub:subForm,subPmt:subPmtForm,invPmt:invPmtForm};
+  const titles={loan:'Edit Transaction',expense:'Edit Expense',bank:'Edit Account',card:'Edit Card',receipt:'Edit Receipt',chuyin:'Edit Entry',bankTx:'Edit Transaction',cardTx:'Edit Transaction',proposal:'Edit Proposal',invoice:'Edit Invoice',sub:'Edit Subcontractor',subPmt:'Edit Payment',invPmt:'Edit Payment',timeEntry:'Edit Time Entry',chuyin2Entry:'Edit Chuyin Entry'};
+  const forms={loan:loanForm,expense:expForm,bank:bankForm,card:cardForm,receipt:recForm,chuyin:chuyinForm,bankTx:bankTxForm,cardTx:cardTxForm,proposal:propForm,invoice:invForm,sub:subForm,subPmt:subPmtForm,invPmt:invPmtForm,timeEntry:timeEntryForm,chuyin2Entry:chuyin2Form};
   document.getElementById('mtitle').textContent=titles[type];
   document.getElementById('mbody').innerHTML=forms[type](d);
   document.getElementById('overlay').classList.add('open');
@@ -1221,6 +1297,8 @@ function confirmDel(){
   if(dType==='proposal')DB.proposals=(DB.proposals||[]).filter(p=>p.id!==dId);
   if(dType==='invoice')DB.invoices=(DB.invoices||[]).filter(i=>i.id!==dId);
   if(dType==='sub')DB.subs=(DB.subs||[]).filter(s=>s.id!==dId);
+  if(dType==='timeEntry')DB.timeEntries=(DB.timeEntries||[]).filter(t=>t.id!==dId);
+  if(dType==='chuyin2')DB.chuyin2=(DB.chuyin2||[]).filter(c=>c.id!==dId);
   if(dType==='subPmt'){const s=DB.subs.find(x=>x.id===curSubId);if(s)s.pmts=(s.pmts||[]).filter(p=>p.id!==dId);}
   if(dType==='invPmt'){const i=DB.invoices.find(x=>x.id===curInvId);if(i)i.pmts=(i.pmts||[]).filter(p=>p.id!==dId);}
   save();closeCon();
@@ -1534,6 +1612,201 @@ function openAddSubPmt(){emode=false;eid=null;etype='subPmt';document.getElement
 function editSub(id){const d=(DB.subs||[]).find(s=>s.id===id);if(d)openEdit('sub',d);}
 function editSubPmt(id){const s=DB.subs.find(x=>x.id===curSubId);const d=s&&s.pmts?s.pmts.find(p=>p.id===id):null;if(d)openEdit('subPmt',d);}
 
+
+// ── TIME TRACKING ───────────────────────────────────────────────
+const TEAM_MEMBERS=['Maria','Jesus Sr.','Jesus Jr.','Betty','Maite','Carlos'];
+const TIME_COS=['MJ Construction','Arctic Penguin','Holding','Chuyin Delivery'];
+
+function renderTime(){
+  const all=DB.timeEntries||[];
+  const f=filters.time;
+  let d=all;
+  if(f==='MJ')d=d.filter(t=>t.co==='MJ Construction');
+  else if(f==='Arctic')d=d.filter(t=>t.co==='Arctic Penguin');
+  else if(f==='Holding')d=d.filter(t=>t.co==='Holding');
+  else if(f==='Chuyin')d=d.filter(t=>t.co==='Chuyin Delivery');
+  d=[...d].sort((a,b)=>b.date.localeCompare(a.date));
+  
+  // Calculate total hours this week
+  const now=new Date();
+  const startOfWeek=new Date(now);
+  startOfWeek.setDate(now.getDate()-now.getDay());
+  startOfWeek.setHours(0,0,0,0);
+  const weekEntries=all.filter(t=>{
+    const d=new Date(t.date+'T12:00:00');
+    return d>=startOfWeek;
+  });
+  const totalMins=weekEntries.reduce((s,t)=>s+(t.minutes||0),0);
+  const hrs=Math.floor(totalMins/60);
+  const mins=totalMins%60;
+  document.getElementById('time-total').textContent=hrs+'h '+mins+'m';
+  document.getElementById('time-sub').textContent=weekEntries.length+' entries this week';
+
+  document.getElementById('time-list').innerHTML=d.length?d.map(t=>{
+    const coColor=t.co==='MJ Construction'?'bmj':t.co==='Arctic Penguin'?'bap':t.co==='Holding'?'bpur':'bin';
+    const hrs=Math.floor((t.minutes||0)/60);
+    const mins=(t.minutes||0)%60;
+    return `<div class="card">
+      <div class="row">
+        <div class="ico ip">⏰</div>
+        <div class="info">
+          <div class="ititle">${t.name}</div>
+          <div class="isub"><span class="badge ${coColor}">${t.co}</span><span>${fd(t.date)}</span></div>
+          <div class="isub">${t.clockIn?'In: '+t.clockIn:''} ${t.clockOut?' · Out: '+t.clockOut:''}</div>
+          ${t.project?`<div class="inote">Project: ${t.project}</div>`:''}
+          ${t.notes?`<div class="inote">${t.notes}</div>`:''}
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="amt cb">${hrs}h ${mins}m</div>
+          ${t.rate?`<div style="font-size:11px;color:var(--gray400)">$${(t.rate*(t.minutes/60)).toFixed(2)}</div>`:''}
+        </div>
+      </div>
+      <div class="actions"><button class="bedit" onclick="editTimeEntry(${t.id})">✏️ Edit</button><button class="bdel" onclick="askDel('timeEntry',${t.id})">🗑 Delete</button></div>
+    </div>`;}).join(''):'<div class="empty"><div class="eico">⏰</div>No time entries yet<br><br>Tap + to log time</div>';
+}
+
+function timeEntryForm(d){const t=todayStr();
+  // Calculate hours if both times provided
+  let calcMins=d?d.minutes||0:0;
+  return `
+  <div class="f2">
+    <div class="frow"><label>Team Member</label><select id="ftm">${TEAM_MEMBERS.map(m=>`<option ${d&&d.name===m?'selected':''}>${m}</option>`).join('')}</select></div>
+    <div class="frow"><label>Company</label><select id="fco">${TIME_COS.map(c=>`<option ${d&&d.co===c?'selected':''}>${c}</option>`).join('')}</select></div>
+  </div>
+  <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
+  <div class="f2">
+    <div class="frow"><label>Clock In</label><input type="time" id="fcin" value="${d?d.clockIn:''}" onchange="calcHours()"></div>
+    <div class="frow"><label>Clock Out</label><input type="time" id="fcout" value="${d?d.clockOut:''}" onchange="calcHours()"></div>
+  </div>
+  <div class="frow"><label>Total Hours (auto-calculated)</label><input type="text" id="fhours" placeholder="e.g. 2h 30m" value="${d?Math.floor(d.minutes/60)+'h '+d.minutes%60+'m':''}" readonly style="background:#eef0f7;color:#555a7a"></div>
+  <div class="frow"><label>Or Enter Minutes Manually</label><input type="number" id="fmins" placeholder="e.g. 150 for 2h 30m" inputmode="numeric" value="${d?d.minutes:''}"></div>
+  <div class="frow"><label>Project / Task</label><input type="text" id="fproject" placeholder="e.g. Bath Remodel, Office Admin, App Work" value="${d?d.project:''}"></div>
+  <div class="frow"><label>Hourly Rate ($) — Optional, add later</label><input type="number" id="frate" placeholder="e.g. 25.00" step="0.01" inputmode="decimal" value="${d?d.rate:''}"></div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button type="button" class="btn bsec" onclick="closeModal()">Cancel</button><button type="button" class="btn bprim" onclick="saveTimeEntry()">Save</button></div>`;}
+
+function calcHours(){
+  const cin=document.getElementById('fcin').value;
+  const cout=document.getElementById('fcout').value;
+  if(cin&&cout){
+    const [h1,m1]=cin.split(':').map(Number);
+    const [h2,m2]=cout.split(':').map(Number);
+    let totalMins=(h2*60+m2)-(h1*60+m1);
+    if(totalMins<0)totalMins+=24*60;
+    document.getElementById('fhours').value=Math.floor(totalMins/60)+'h '+totalMins%60+'m';
+    document.getElementById('fmins').value=totalMins;
+  }
+}
+
+function saveTimeEntry(){
+  const name=document.getElementById('ftm').value;
+  let minutes=parseInt(document.getElementById('fmins').value)||0;
+  if(!minutes){
+    const cin=document.getElementById('fcin').value;
+    const cout=document.getElementById('fcout').value;
+    if(cin&&cout){
+      const [h1,m1]=cin.split(':').map(Number);
+      const [h2,m2]=cout.split(':').map(Number);
+      minutes=(h2*60+m2)-(h1*60+m1);
+      if(minutes<0)minutes+=24*60;
+    }
+  }
+  if(!minutes){toast('⚠️ Enter clock in/out times or minutes');return;}
+  if(!DB.timeEntries)DB.timeEntries=[];
+  const r={id:emode?eid:DB.nextId++,name,co:document.getElementById('fco').value,date:document.getElementById('fd').value||todayStr(),clockIn:document.getElementById('fcin').value,clockOut:document.getElementById('fcout').value,minutes,project:document.getElementById('fproject').value,rate:parseFloat(document.getElementById('frate').value)||0,notes:document.getElementById('fnotes').value};
+  if(emode)DB.timeEntries=DB.timeEntries.map(t=>t.id===eid?r:t);else DB.timeEntries.push(r);
+  save();closeModal();render();toast(emode?'Updated ✓':'Time logged ✓');
+}
+function editTimeEntry(id){const d=(DB.timeEntries||[]).find(t=>t.id===id);if(d)openEdit('timeEntry',d);}
+
+// ── CHUYIN2 ─────────────────────────────────────────────────────
+const CHUYIN2_CATS=['Delivery Income','Diesel/Fuel','Truck Maintenance','Crew Payment','Supplies','Insurance','Platform Fee','Other'];
+const CREW_NAMES=['Helper 1','Helper 2','Helper 3'];
+
+function renderChuyin2(){
+  const all=DB.chuyin2||[];
+  const f=filters.chuyin2;
+  let d=all;
+  if(f==='income')d=d.filter(c=>c.type==='income');
+  else if(f==='expense')d=d.filter(c=>c.type==='expense');
+  else if(f==='fuel')d=d.filter(c=>c.cat==='Diesel/Fuel');
+  else if(f==='crew')d=d.filter(c=>c.cat==='Crew Payment');
+  else if(f==='truck')d=d.filter(c=>c.cat==='Truck Maintenance');
+  d=[...d].sort((a,b)=>b.date.localeCompare(a.date));
+
+  const earn=all.filter(c=>c.type==='income').reduce((s,c)=>s+c.amount,0);
+  const exp=all.filter(c=>c.type==='expense').reduce((s,c)=>s+c.amount,0);
+  const miles=all.reduce((s,c)=>s+(c.miles||0),0);
+  const fuel=all.filter(c=>c.cat==='Diesel/Fuel').reduce((s,c)=>s+c.amount,0);
+  document.getElementById('ch2-net').textContent=fmt(earn-exp);
+  document.getElementById('ch2-earn').textContent=fmt(earn);
+  document.getElementById('ch2-exp').textContent=fmt(exp);
+  document.getElementById('ch2-miles').textContent=miles.toLocaleString()+' mi';
+  document.getElementById('ch2-fuel').textContent=fmt(fuel);
+  document.getElementById('ch2-sub').textContent=fmt(earn)+' earned − '+fmt(exp)+' expenses';
+
+  document.getElementById('ch2-list').innerHTML=d.length?d.map(c=>{
+    const isIncome=c.type==='income';
+    const ico=c.cat==='Diesel/Fuel'?'⛽':c.cat==='Truck Maintenance'?'🔧':c.cat==='Crew Payment'?'👥':isIncome?'🚗':'💸';
+    return `<div class="card accent-green">
+      <div class="row">
+        <div class="ico ${isIncome?'ig':'ir'}">${ico}</div>
+        <div class="info">
+          <div class="ititle">${c.desc}</div>
+          <div class="isub"><span>${fd(c.date)}</span><span class="badge ${isIncome?'bin':'bout'}">${isIncome?'Income':'Expense'}</span><span class="badge bcat">${c.cat}</span></div>
+          ${c.miles?`<div class="inote">🛣️ ${c.miles} miles</div>`:''}
+          ${c.crew?`<div class="inote">👥 Crew: ${c.crew}</div>`:''}
+          ${c.notes?`<div class="inote">${c.notes}</div>`:''}
+        </div>
+        <div class="amt ${isIncome?'cg':'cr'}">${isIncome?'+':'-'}${fmt(c.amount)}</div>
+      </div>
+      <div class="actions"><button class="bedit" onclick="editChuyin2(${c.id})">✏️ Edit</button><button class="bdel" onclick="askDel('chuyin2',${c.id})">🗑 Delete</button></div>
+    </div>`;}).join(''):'<div class="empty"><div class="eico">🚗</div>No entries yet<br><br>Tap + to add one</div>';
+}
+
+function chuyin2Form(d){const t=todayStr();return `
+  <div class="f2">
+    <div class="frow"><label>Type</label><select id="ftype"><option value="income" ${!d||d.type==='income'?'selected':''}>Income 🚗</option><option value="expense" ${d&&d.type==='expense'?'selected':''}>Expense 💸</option></select></div>
+    <div class="frow"><label>Date</label><input type="date" id="fd" value="${d?d.date:t}"></div>
+  </div>
+  <div class="frow"><label>Category</label><select id="fcat">${CHUYIN2_CATS.map(c=>`<option ${d&&d.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+  <div class="frow"><label>Description</label><input type="text" id="fdesc" placeholder="e.g. DoorDash shift, Shell gas, Oil change" value="${d?d.desc:''}"></div>
+  <div class="f2">
+    <div class="frow"><label>Amount ($)</label><input type="number" id="famt" placeholder="0.00" step="0.01" inputmode="decimal" value="${d?d.amount:''}"></div>
+    <div class="frow"><label>Miles Driven</label><input type="number" id="fmiles" placeholder="0" inputmode="numeric" value="${d?d.miles:''}"></div>
+  </div>
+  <div class="frow"><label>Crew Members (if any)</label><input type="text" id="fcrew" placeholder="e.g. Carlos, Helper 1" value="${d?d.crew:''}"></div>
+  <div class="frow"><label>Notes</label><input type="text" id="fnotes" placeholder="Optional" value="${d?d.notes:''}"></div>
+  <div class="brow"><button type="button" class="btn bsec" onclick="closeModal()">Cancel</button><button type="button" class="btn bprim" onclick="saveChuyin2()">Save</button></div>`;}
+
+function saveChuyin2(){
+  const amt=parseFloat(document.getElementById('famt').value);
+  if(isNaN(amt)||amt<=0){toast('⚠️ Enter an amount');return;}
+  if(!DB.chuyin2)DB.chuyin2=[];
+  const r={id:emode?eid:DB.nextId++,type:document.getElementById('ftype').value,date:document.getElementById('fd').value||todayStr(),cat:document.getElementById('fcat').value,desc:document.getElementById('fdesc').value||'Entry',amount:amt,miles:parseInt(document.getElementById('fmiles').value)||0,crew:document.getElementById('fcrew').value,notes:document.getElementById('fnotes').value};
+  if(emode)DB.chuyin2=DB.chuyin2.map(c=>c.id===eid?r:c);else DB.chuyin2.push(r);
+  save();closeModal();render();toast(emode?'Updated ✓':'Added ✓');
+}
+function editChuyin2(id){const d=(DB.chuyin2||[]).find(c=>c.id===id);if(d)openEdit('chuyin2Entry',d);}
+
+// ── IN-APP NOTIFICATIONS ────────────────────────────────────────
+let lastSeenCount={};
+function checkNotifications(){
+  const tabs=['loans','expenses','chuyin','chuyin2','timeEntries','proposals','invoices','subs'];
+  let newItems=0;
+  tabs.forEach(tab=>{
+    const current=(DB[tab]||[]).length;
+    const last=lastSeenCount[tab]||0;
+    if(current>last)newItems+=(current-last);
+    lastSeenCount[tab]=current;
+  });
+  if(newItems>0){
+    document.getElementById('notif-text').textContent='🔔 '+newItems+' new update'+(newItems>1?'s':'')+' from your team!';
+    document.getElementById('notif-banner').style.display='block';
+    setTimeout(()=>document.getElementById('notif-banner').style.display='none',5000);
+  }
+}
+
 render();
 
 // Auto-sync on load — pull latest from Google Sheets every time app opens
@@ -1577,6 +1850,7 @@ async function pullFromSheets() {
     localStorage.setItem(KEY, JSON.stringify(DB));
     render();
     showSyncStatus(gotData ? 'Updated ✓' : 'Up to date ✓');
+    if(gotData) checkNotifications();
   } catch(e) {
     showSyncStatus('');
   }
